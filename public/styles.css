@@ -125,3 +125,57 @@ body{background:var(--paper)}
  .zion-lookbook-header h2{font-size:clamp(60px,15vw,95px)}
  .zion-lookbook-item figcaption{font-size:8px;letter-spacing:.04em}
 }
+
+/* ZION OPENING / 2 CORÍNTIOS 12:9 — abertura editorial original */
+body.zion-intro-lock{overflow:hidden}
+.zion-intro[hidden]{display:none!important}
+.zion-intro{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;background:#213b2d;color:#f0ede1;isolation:isolate;overflow:hidden;opacity:1;transition:opacity .85s cubic-bezier(.45,0,.25,1),transform .85s cubic-bezier(.45,0,.25,1)}
+.zion-intro__noise{position:absolute;inset:0;pointer-events:none;opacity:.3;background:radial-gradient(ellipse at 51% 45%,rgba(151,177,133,.12),transparent 58%),linear-gradient(148deg,rgba(5,26,15,.32),transparent 65%)}
+.zion-intro__corners,.zion-intro__bottom{position:absolute;left:clamp(20px,5.5vw,90px);right:clamp(20px,5.5vw,90px);display:flex;align-items:center;justify-content:space-between;gap:20px;z-index:5;font:600 10px/1.5 var(--sans);letter-spacing:.2em;color:#d9e0ce}
+.zion-intro__corners{top:clamp(24px,4vw,55px);opacity:.6}
+.zion-intro__bottom{bottom:clamp(20px,4vw,52px)}
+.zion-intro__skip{border:0;border-bottom:1px solid rgba(240,237,225,.8);border-radius:0;background:transparent;color:inherit;font:600 10px/1.3 var(--sans);letter-spacing:.17em;padding:10px 0;position:relative;z-index:8}
+.zion-intro__skip:hover{color:#fff;border-color:#fff}
+.zion-intro__center{width:100%;padding:0 clamp(22px,5vw,90px);min-height:190px;display:grid;place-items:center;position:relative}
+.zion-intro__verse{position:relative;text-align:center;max-width:1100px;width:100%;transition:transform .8s cubic-bezier(.4,0,.3,1),opacity .64s,filter .75s;transform-origin:center}
+.zion-intro__quote{font-family:'Courier Prime','Courier New',monospace;font-weight:400;font-size:clamp(16px,2.05vw,31px);line-height:1.65;letter-spacing:-.035em}
+.zion-intro__line{display:block;opacity:0;clip-path:inset(0 100% 0 0)}
+.zion-intro.is-typing .zion-intro__line--first{opacity:1;animation:zion-type-first 1.4s steps(30,end) both}
+.zion-intro.is-typing .zion-intro__line--second{opacity:1;animation:zion-type-second 1.85s 1.42s steps(46,end) both}
+.zion-intro__source{font:600 10px/1.5 var(--sans);letter-spacing:.24em;margin-top:35px;color:#bfcdb7;opacity:0;transition:opacity .4s}
+.zion-intro.is-typing .zion-intro__source{animation:zion-source .5s 3.08s both}
+@keyframes zion-type-first{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+@keyframes zion-type-second{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+@keyframes zion-source{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.zion-intro.is-forming .zion-intro__verse,.zion-intro.is-wordmark .zion-intro__verse{transform:scale(.08);opacity:0;filter:blur(9px)}
+.zion-intro__logo{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:0;opacity:0;transition:opacity .45s,transform .65s;transform:scale(.75);pointer-events:none;font:800 clamp(125px,24vw,360px)/.8 var(--display);letter-spacing:-.03em}
+.zion-intro__z{display:inline-block;transform:translateX(.47em) scale(.25) rotate(-12deg);transition:transform 1s cubic-bezier(.16,1,.3,1),filter .5s;filter:blur(10px)}
+.zion-intro__ion{display:inline-block;max-width:0;white-space:nowrap;opacity:0;overflow:hidden;transform:translateX(-.18em);transition:max-width 1s cubic-bezier(.3,.8,.3,1),transform 1s,opacity .5s;letter-spacing:-.045em}
+.zion-intro__dot{color:#c9d8b4}
+.zion-intro.is-forming .zion-intro__logo,.zion-intro.is-wordmark .zion-intro__logo{opacity:1;transform:scale(1)}
+.zion-intro.is-forming .zion-intro__z{filter:blur(0);transform:translateX(.47em) scale(1) rotate(0)}
+.zion-intro.is-wordmark .zion-intro__z{filter:blur(0);transform:translateX(0) scale(1)}
+.zion-intro.is-wordmark .zion-intro__ion{max-width:2.8em;transform:translateX(0);opacity:1}
+.zion-intro.is-exiting{opacity:0;transform:translateY(-40px);pointer-events:none}
+/* Scroll 3D: profundidade discreta, renderização com transform e scroll rAF */
+.zion-motion .depth-reveal{opacity:0;transform:perspective(1200px) translate3d(0,42px,0) rotateX(3deg);transition:opacity .8s ease,transform .95s cubic-bezier(.2,.75,.3,1)}
+.zion-motion .depth-reveal.is-visible{opacity:1;transform:perspective(1200px) translate3d(0,0,0) rotateX(var(--zion-depth-tilt,0deg))}
+.zion-motion .depth-reveal[data-zion-delay="1"]{transition-delay:.11s}
+.zion-motion .depth-reveal[data-zion-delay="2"]{transition-delay:.2s}
+.zion-motion .hero-bg,.zion-motion .tile-photo,.zion-motion .campaign-photo{translate:0 var(--zion-parallax,0px)}
+.zion-motion .tile-photo{scale:1.09}
+.zion-motion .campaign-photo{background-size:cover}
+@media(max-width:700px){
+ .zion-intro__corners,.zion-intro__bottom{font-size:8px;letter-spacing:.13em}
+ .zion-intro__corners span:last-child,.zion-intro__bottom>span{display:none}
+ .zion-intro__bottom{justify-content:flex-end}
+ .zion-intro__quote{font-size:clamp(15px,4.4vw,22px);line-height:1.7}
+ .zion-intro__line--second{max-width:310px;margin:auto}
+ .zion-intro__logo{font-size:clamp(110px,25vw,210px)}
+ .zion-intro__source{font-size:9px}
+}
+@media(prefers-reduced-motion:reduce){
+ .zion-intro,.zion-intro *{animation:none!important;transition:none!important}
+ .zion-motion .depth-reveal,.zion-motion .depth-reveal.is-visible{opacity:1!important;transform:none!important}
+ .zion-motion .hero-bg,.zion-motion .tile-photo,.zion-motion .campaign-photo{translate:none!important}
+}
