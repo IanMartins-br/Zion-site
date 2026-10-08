@@ -120,7 +120,7 @@
     if (wordmark && suffix) {
       const suffixWidth = suffix.getBoundingClientRect().width;
       if (suffixWidth > 0) {
-        wordmark.style.setProperty('--zion-ion-half',(suffixWidth / 2).toFixed(2)+'px');
+        wordmark.style.setProperty('--zion-ion-shift',(-suffixWidth / 2).toFixed(2)+'px');
       }
     }
     overlay.classList.add('is-wordmark');
