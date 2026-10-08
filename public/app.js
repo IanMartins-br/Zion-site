@@ -185,33 +185,147 @@ const localZionEditorials=[
   {slot:'campanha',url:'/assets/zion-0790.webp'},
   {slot:'campanha',url:'/assets/zion-0799.webp'}
 ];
-function cyclePhotos(images,slot,selector){
-  const candidates=images.filter(p=>p.slot===slot||p.slot==='geral');
-  if(!candidates.length)return false;
-  const cycle=Math.floor(Date.now()/(3*60*60*1000));
-  const seed=Array.from(slot).reduce((n,c)=>n+c.charCodeAt(0),0);
-  const selected=candidates[(cycle+seed)%candidates.length];
-  const target=document.querySelector(selector);
-  const safeRemote=/^\/media\/editorials\/[a-f0-9-]{36}\.(jpg|png|webp|avif)$/.test(selected.url);
-  const safeLocal=/^\/assets\/zion-(0770|0779|0790|0791|0799|cover-wide)\.webp$/.test(selected.url);
-  if(target&&(safeRemote||safeLocal)){
-    target.style.backgroundImage='url("'+selected.url+'")';
-    return true;
+
+const zionEditorialCycleMs=3*60*60*1000;
+const zionDriveManifestUrl='/data/zion-drive-photos.json';
+const validDriveId=id=>typeof id==='string'&&/^[A-Za-z0-9_-]{15,100}$/.test(id);
+const driveThumb=(id,width=1150)=>'https://drive.google.com/thumbnail?id='+encodeURIComponent(id)+'&sz=w'+width;
+function cycleNumber(){return Math.floor(Date.now()/zionEditorialCycleMs)}
+function currentPhoto(items,slot){
+  const choices=items.filter(p=>p.slot===slot||p.slot==='geral');
+  if(!choices.length)return null;
+  const salt=[...slot].reduce((sum,letter)=>sum+letter.charCodeAt(0),0);
+  return choices[(cycleNumber()+salt)%choices.length];
+}
+function setPhotoBackground(selector,url,priority=1){
+  const node=document.querySelector(selector);
+  if(!node)return;
+  const image=new Image();
+  image.referrerPolicy='no-referrer';
+  image.onload=()=>{
+    if(priority>=Number(node.dataset.photoPriority||0)){
+      node.style.backgroundImage='url("'+url+'")';
+      node.dataset.photoPriority=String(priority);
+    }
+  };
+  image.onerror=()=>{}; // Conserva os WebP da Zion como fallback.
+  image.src=url;
+}
+function cyclePhotos(images,slot,selector,priority=1){
+  const photo=currentPhoto(images,slot);
+  if(!photo)return;
+  const url=photo.url;
+  const local=/^\/assets\/zion-(0770|0779|0790|0791|0799|cover-wide)\.webp$/.test(url);
+  const r2=/^\/media\/editorials\/[a-f0-9-]{36}\.(jpg|png|webp|avif)$/.test(url);
+  if(local||r2)setPhotoBackground(selector,url,priority);
+}
+function pickDriveEditorials(photos){
+  const first=(cycleNumber()*7)%photos.length;
+  return Array.from({length:10},(_,i)=>photos[(first+i*11)%photos.length]);
+}
+async function loadDriveEditorials(){
+  const response=await fetch(zionDriveManifestUrl,{cache:'no-store'});
+  if(!response.ok)return;
+  const manifest=await response.json();
+  const photos=Array.isArray(manifest.photos)?manifest.photos.filter(p=>validDriveId(p.id)):[];
+  if(!photos.length)return;
+  const selection=pickDriveEditorials(photos);
+  document.querySelectorAll('[data-zion-photo]').forEach((node,i)=>{
+    const source=selection[i];if(!source)return;
+    const fallback=node.getAttribute('src');
+    const image=new Image();
+    image.referrerPolicy='no-referrer';
+    image.onload=()=>{node.src=image.src;node.alt='Foto original Zion Clothing — '+source.name;};
+    image.onerror=()=>{node.src=fallback;};
+    image.src=driveThumb(source.id,1000);
+  });
+  const positions=[
+    ['.hero-bg',6,1750],['.tile-woman .tile-photo',7,1050],
+    ['.tile-man .tile-photo',8,1050],['.campaign-photo',9,1300]
+  ];
+  for(const [selector,index,width] of positions){
+    const photo=selection[index];if(photo)setPhotoBackground(selector,driveThumb(photo.id,width),2);
   }
-  return false;
 }
 async function loadEditorials(){
   const sections=[
     ['hero','.hero-bg'],['feminino','.tile-woman .tile-photo'],
     ['masculino','.tile-man .tile-photo'],['campanha','.campaign-photo']
   ];
-  // Mostra fotos oficiais da marca mesmo quando ainda não há nenhuma imagem no R2.
-  for(const [slot,selector] of sections)cyclePhotos(localZionEditorials,slot,selector);
+  for(const [slot,selector] of sections)cyclePhotos(localZionEditorials,slot,selector,1);
+  try{await loadDriveEditorials();}catch(error){console.info('Fotos locais Zion disponíveis.');}
   try{
-    const r=await fetch('/api/editorials',{cache:'no-store'});
-    if(!r.ok)return;
-    const {images=[]}=await r.json();
-    for(const [slot,selector] of sections)cyclePhotos(images,slot,selector);
-  }catch(e){console.info('Exibindo fotografias locais da Zion.');}
+    const response=await fetch('/api/editorials',{cache:'no-store'});
+    if(!response.ok)return;
+    const {images=[]}=await response.json();
+    for(const [slot,selector] of sections)cyclePhotos(images,slot,selector,3);
+  }catch(error){console.info('Galeria R2 ainda não configurada.');}
 }
-loadCatalog();loadEditorials();
+function startZionIntro(){
+  const overlay=document.getElementById('zionIntro');
+  if(!overlay)return;
+  const reduce=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  let seen=false;
+  try{seen=sessionStorage.getItem('zion-opening-v1')==='seen'}catch{}
+  if(seen||reduce){overlay.remove();return}
+  const timers=[];
+  let ended=false;
+  const onKeydown=e=>{if(e.key==='Escape')finish()};
+  function finish(){
+    if(ended)return;
+    ended=true;timers.forEach(clearTimeout);
+    document.removeEventListener('keydown',onKeydown);
+    overlay.classList.add('is-exiting');
+    document.body.classList.remove('zion-intro-lock');
+    try{sessionStorage.setItem('zion-opening-v1','seen')}catch{}
+    setTimeout(()=>overlay.remove(),900);
+  }
+  overlay.hidden=false;
+  document.body.classList.add('zion-intro-lock');
+  document.getElementById('skipZionIntro')?.addEventListener('click',finish,{once:true});
+  document.addEventListener('keydown',onKeydown);
+  requestAnimationFrame(()=>overlay.classList.add('is-typing'));
+  timers.push(setTimeout(()=>overlay.classList.add('is-forming'),3550));
+  timers.push(setTimeout(()=>overlay.classList.add('is-wordmark'),4450));
+  timers.push(setTimeout(finish,6100));
+}
+function initZionScrollMotion(){
+  if(!('IntersectionObserver' in window)||window.matchMedia?.('(prefers-reduced-motion: reduce)').matches)return;
+  const revealNodes=[...document.querySelectorAll('.collection-intro-body,.editorial-tile,.catalog-heading,.zion-lookbook-item,.movement-banner,.campaign-copy,.community-side')];
+  revealNodes.forEach((node,index)=>{node.classList.add('depth-reveal');node.dataset.zionDelay=String(index%3)});
+  document.documentElement.classList.add('zion-motion');
+  const observer=new IntersectionObserver(entries=>{
+    for(const entry of entries){
+      if(entry.isIntersecting){entry.target.classList.add('is-visible');observer.unobserve(entry.target)}
+    }
+  },{threshold:.08,rootMargin:'0px 0px -4% 0px'});
+  revealNodes.forEach(node=>observer.observe(node));
+  const photos=[...document.querySelectorAll('.hero-bg,.tile-photo,.campaign-photo')];
+  const tiltNodes=[...document.querySelectorAll('.zion-lookbook-item')];
+  let scheduled=false;
+  function updateDepth(){
+    scheduled=false;
+    const viewport=window.innerHeight||800;
+    for(const node of photos){
+      const rect=node.getBoundingClientRect();
+      if(rect.bottom<0||rect.top>viewport)continue;
+      const progress=(rect.top+rect.height*.5-viewport*.5)/viewport;
+      const shift=Math.max(-18,Math.min(18,-progress*19));
+      node.style.setProperty('--zion-parallax',shift.toFixed(1)+'px');
+    }
+    for(const node of tiltNodes){
+      const rect=node.getBoundingClientRect();
+      if(rect.bottom<0||rect.top>viewport)continue;
+      const progress=(rect.top+rect.height*.5-viewport*.5)/viewport;
+      node.style.setProperty('--zion-depth-tilt',Math.max(-1.6,Math.min(1.6,-progress*2)).toFixed(2)+'deg');
+    }
+  }
+  const tick=()=>{if(!scheduled){scheduled=true;requestAnimationFrame(updateDepth)}};
+  window.addEventListener('scroll',tick,{passive:true});
+  window.addEventListener('resize',tick,{passive:true});
+  tick();
+}
+startZionIntro();
+initZionScrollMotion();
+loadCatalog();
+loadEditorials();

@@ -12,12 +12,29 @@
   <link rel="preconnect" href="https://images.unsplash.com">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&family=Italiana&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;800&family=Courier+Prime:wght@400;700&family=DM+Sans:wght@400;500;600;700&family=Italiana&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   
 </head>
 <body>
   <a class="skip-link" href="#conteudo">Ir para o conteúdo</a>
+  <div class="zion-intro" id="zionIntro" role="dialog" aria-modal="true" aria-label="Abertura da Zion Clothing" hidden>
+    <div class="zion-intro__noise" aria-hidden="true"></div>
+    <div class="zion-intro__corners" aria-hidden="true"><span>EST. ZION CLOTHING</span><span>2 CORÍNTIOS 12:9</span></div>
+    <div class="zion-intro__center">
+      <div class="zion-intro__verse">
+        <div class="zion-intro__quote" aria-label="A minha graça te basta, porque o meu poder se aperfeiçoa na fraqueza.">
+          <span class="zion-intro__line zion-intro__line--first">“A minha graça te basta,</span>
+          <span class="zion-intro__line zion-intro__line--second">porque o meu poder se aperfeiçoa na fraqueza.”</span>
+        </div>
+        <p class="zion-intro__source">2 CORÍNTIOS 12:9</p>
+      </div>
+      <div class="zion-intro__logo" aria-hidden="true">
+        <span class="zion-intro__z">Z</span><span class="zion-intro__ion">ION<span class="zion-intro__dot">.</span></span>
+      </div>
+    </div>
+    <div class="zion-intro__bottom"><span>IDENTIDADE / PROPÓSITO / ZION</span><button type="button" id="skipZionIntro" class="zion-intro__skip">PULAR ABERTURA <span aria-hidden="true">↗</span></button></div>
+  </div>
   <div class="announcement"><span>ESTILO. IDENTIDADE. PROPÓSITO.</span><span class="announcement-center">ZION CLOTHING / BRASIL</span><a href="https://www.instagram.com/usezion.ofc/" target="_blank" rel="noopener noreferrer">SIGA @USEZION.OFC ↗</a></div>
   <header class="site-header is-over-hero" id="header">
     <div class="header-left">
@@ -110,10 +127,13 @@
         <h2>FEITO PARA<br><em>VIVER.</em></h2>
         <p>Roupas que falam por si. Expressão, movimento e a nossa identidade em cada fotografia.</p>
       </div>
-      <div class="zion-lookbook-grid">
-        <figure class="zion-lookbook-item"><img src="/assets/zion-0770.webp" alt="Fotografia oficial Zion: camiseta bege e boné claro na campanha ao ar livre" loading="lazy" decoding="async" width="1100" height="1650"><figcaption>ZION / ESSENCIAIS <span>01</span></figcaption></figure>
-        <figure class="zion-lookbook-item"><img src="/assets/zion-0799.webp" alt="Fotografia oficial Zion: detalhe das costas da camiseta preta Yesterday Today Forever" loading="lazy" decoding="async" width="1100" height="1650"><figcaption>ZION / DETALHES <span>02</span></figcaption></figure>
-        <figure class="zion-lookbook-item"><img src="/assets/zion-0790.webp" alt="Fotografia oficial Zion: camiseta preta estampada Go Into All the World vista de costas" loading="lazy" decoding="async" width="1100" height="1650"><figcaption>ZION / PROPÓSITO <span>03</span></figcaption></figure>
+      <div class="zion-lookbook-grid" id="zionLookbookGrid">
+        <figure class="zion-lookbook-item"><img src="/assets/zion-0770.webp" data-zion-photo="0" alt="Editorial Zion Clothing, fotografia 1 da coleção" loading="lazy" decoding="async"><figcaption>ZION / EDITORIAL <span>01</span></figcaption></figure>
+        <figure class="zion-lookbook-item"><img src="/assets/zion-0779.webp" data-zion-photo="1" alt="Editorial Zion Clothing, fotografia 2 da coleção" loading="lazy" decoding="async"><figcaption>ZION / EDITORIAL <span>02</span></figcaption></figure>
+        <figure class="zion-lookbook-item"><img src="/assets/zion-0790.webp" data-zion-photo="2" alt="Editorial Zion Clothing, fotografia 3 da coleção" loading="lazy" decoding="async"><figcaption>ZION / EDITORIAL <span>03</span></figcaption></figure>
+        <figure class="zion-lookbook-item"><img src="/assets/zion-0791.webp" data-zion-photo="3" alt="Editorial Zion Clothing, fotografia 4 da coleção" loading="lazy" decoding="async"><figcaption>ZION / EDITORIAL <span>04</span></figcaption></figure>
+        <figure class="zion-lookbook-item"><img src="/assets/zion-0799.webp" data-zion-photo="4" alt="Editorial Zion Clothing, fotografia 5 da coleção" loading="lazy" decoding="async"><figcaption>ZION / EDITORIAL <span>05</span></figcaption></figure>
+        <figure class="zion-lookbook-item"><img src="/assets/zion-0770.webp" data-zion-photo="5" alt="Editorial Zion Clothing, fotografia 6 da coleção" loading="lazy" decoding="async"><figcaption>ZION / EDITORIAL <span>06</span></figcaption></figure>
       </div>
     </section>
     <section class="movement-banner" aria-label="Manifesto Zion">
