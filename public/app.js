@@ -140,7 +140,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&activePanel)closePa
 window.addEventListener('scroll',updateHeader,{passive:true});
 $$('[data-shop-category]').forEach(btn=>btn.addEventListener('click',()=>shopCategory(btn.dataset.shopCategory)));
 $$('[data-scroll]').forEach(btn=>btn.addEventListener('click',()=>document.querySelector(btn.dataset.scroll)?.scrollIntoView({behavior:'smooth'})));
-$('[data-info]').forEach(btn=>btn.addEventListener('click',()=>{if(btn.dataset.info==='Instagram'){window.open('https://www.instagram.com/usezion.ofc/','_blank','noopener,noreferrer');return;}announce(`${btn.dataset.info}: configure as informações da sua loja para ativar esta área.`);}));
+$$('[data-info]').forEach(btn=>btn.addEventListener('click',()=>{if(btn.dataset.info==='Instagram'){window.open('https://www.instagram.com/usezion.ofc/','_blank','noopener,noreferrer');return;}announce(`${btn.dataset.info}: configure as informações da sua loja para ativar esta área.`);}));
 $('#heroShopBtn').addEventListener('click',()=>shopCategory('Todos'));
 $('#campaignButton').addEventListener('click',()=>shopCategory('Todos'));
 $$('.tab').forEach(btn=>btn.addEventListener('click',()=>shopCategory(btn.dataset.filter)));
