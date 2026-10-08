@@ -67,16 +67,16 @@ async function publicRoutes(request,env,path){
 }
 async function adminRoutes(request,env,path){
   if(path==='/api/admin/login' && request.method==='POST'){
-    if(!env.ADMIN_PASSWORD || !env.SESSION_SECRET || env.ADMIN_PASSWORD.length<12 || env.SESSION_SECRET.length<32)return fail('Configure ADMIN_PASSWORD (12+ caracteres) e SESSION_SECRET (32+ caracteres) nos segredos do Worker.',503);
-    const identity=await sha256((request.headers.get('CF-Connecting-IP')||'local')+'|'+env.SESSION_SECRET);
+    if(!env.ADMIN_PASSWORD || !/^\\d{4}$/.test(env.ADMIN_PASSWORD))return fail('Configure ADMIN_PASSWORD com o PIN temporário de 4 dígitos no Secret do Worker.',503);
+    const identity=await sha256('zion-login-attempts-v1|'+(request.headers.get('CF-Connecting-IP')||'local'));
     const windowStart=now()-900;
     await env.DB.prepare('DELETE FROM login_attempts WHERE attempted_at < ?').bind(windowStart).run();
     const attempted=await env.DB.prepare('SELECT COUNT(*) AS n FROM login_attempts WHERE ip_hash = ? AND attempted_at >= ?').bind(identity,windowStart).first();
     if(attempted.n>=6)return fail('Muitas tentativas. Tente novamente em 15 minutos.',429);
     const data=await parseBody(request);
     const supplied=typeof data.password==='string'?data.password:'';
-    const actual=await sha256(env.ADMIN_PASSWORD+'|'+env.SESSION_SECRET);
-    const trial=await sha256(supplied+'|'+env.SESSION_SECRET);
+    const actual=await sha256(env.ADMIN_PASSWORD+'|zion-login-v1');
+    const trial=await sha256(supplied+'|zion-login-v1');
     if(actual!==trial){
       await env.DB.prepare('INSERT INTO login_attempts (ip_hash,attempted_at) VALUES (?,?)').bind(identity,now()).run();
       return fail('Senha incorreta.',401);
