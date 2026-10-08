@@ -8,7 +8,7 @@
     return;
   }
 
-  const timing = {gather:1400,zReady:2470,wordmark:2700,end:4300};
+  const timing = {gather:1400,zReady:2220,wordmark:2700,end:4300};
   const timers = [], particles = [];
   let ended = false;
   const onEscape = e => { if (e.key === 'Escape') finish(); };
@@ -54,7 +54,7 @@
         range.setEnd(text,i+1);
         const rect = range.getBoundingClientRect();
         if (!rect.width || !rect.height) continue;
-        glyphs.push({letter,rect,fontSize:style.fontSize,fontFamily:style.fontFamily});
+        glyphs.push({letter,rect,fontSize:style.fontSize,fontFamily:style.fontFamily,fontWeight:style.fontWeight,lineHeight:style.lineHeight,letterSpacing:style.letterSpacing});
       }
     }
     if (!glyphs.length) {
@@ -76,6 +76,9 @@
       particle.style.top = (glyph.rect.top-frame.top)+'px';
       particle.style.fontSize = glyph.fontSize;
       particle.style.fontFamily = glyph.fontFamily;
+      particle.style.fontWeight = glyph.fontWeight;
+      particle.style.lineHeight = glyph.lineHeight;
+      particle.style.letterSpacing = glyph.letterSpacing;
       fragment.appendChild(particle);
       particles.push(particle);
     });
@@ -90,13 +93,16 @@
       const dy = frame.height/2+target.y-originY;
       const transform = (x,y,size) =>
         'translate3d('+x.toFixed(1)+'px,'+y.toFixed(1)+'px,0) scale('+size+')';
-      // Sem fade: as letras mantêm 100% de opacidade, ficam mais espessas
-      // e se sobrepõem até compor os três traços do Z.
+      // Morph contínuo: as letras saem exatamente da posição original,
+      // percorrem os traços do Z, engrossam e se fundem à letra sólida.
+      // Elas encolhem para dentro do Z; nenhuma opacidade é animada.
       particles[i].animate([
         {transform:transform(0,0,1),textShadow:'0 0 0 transparent',offset:0},
-        {transform:transform(dx*.7,dy*.7,1.03),textShadow:'0 0 1px rgba(240,237,225,.2)',offset:.66},
-        {transform:transform(dx,dy,1.47),textShadow:'0 0 7px rgba(240,237,225,.96), 1px 0 #f0ede1, -1px 0 #f0ede1',offset:1}
-      ],{duration:870,delay:(i%12)*10,easing:'cubic-bezier(.65,.02,.23,1)',fill:'forwards'});
+        {transform:transform(dx*.36,dy*.36,1.04),textShadow:'0 0 0 transparent',offset:.35},
+        {transform:transform(dx,dy,1.68),textShadow:'0 0 7px rgba(240,237,225,.75),1px 0 #f0ede1,-1px 0 #f0ede1',offset:.82},
+        {transform:transform(dx,dy,1.12),textShadow:'0 0 3px rgba(240,237,225,.7),1px 0 #f0ede1',offset:.94},
+        {transform:transform(dx,dy,.04),textShadow:'0 0 0 transparent',offset:1}
+      ],{duration:980,delay:(i%7)*11,easing:'cubic-bezier(.52,.08,.24,1)',fill:'forwards'});
     });
   }
 
@@ -108,8 +114,8 @@
     window.requestAnimationFrame(() => overlay.classList.add('is-typing'))
   );
   timers.push(window.setTimeout(gatherLetters,timing.gather));
-  // Troca a silhueta construída pelas letras pelo Z tipográfico no mesmo
-  // instante; não diminui a opacidade das partículas para escondê-las.
+  // O Z nasce por baixo das letras enquanto elas se comprimem na
+  // silhueta, eliminando a troca instantânea que parecia travada.
   timers.push(window.setTimeout(() => {if(!ended)overlay.classList.add('is-z-ready');},timing.zReady));
   timers.push(window.setTimeout(() => {
     if (ended) return;
