@@ -147,16 +147,17 @@ body.zion-intro-lock{overflow:hidden}
 @keyframes zion-type-first{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
 @keyframes zion-type-second{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
 @keyframes zion-source{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-.zion-intro.is-gathering .zion-intro__verse,.zion-intro.is-wordmark .zion-intro__verse{transform:scale(.97);opacity:0;filter:blur(1px)}
-.zion-intro__logo{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:0;opacity:0;transition:opacity .45s,transform .65s;transform:scale(.75);pointer-events:none;font:800 clamp(125px,24vw,360px)/.8 var(--display);letter-spacing:-.03em}
-.zion-intro__z{display:inline-block;opacity:0;transform:scale(.92);transition:transform .8s cubic-bezier(.16,1,.3,1),opacity .22s,filter .25s;filter:blur(4px)}
-.zion-intro__ion{display:inline-block;max-width:0;white-space:nowrap;opacity:0;overflow:hidden;transform:translateX(-.18em);transition:max-width 1s cubic-bezier(.3,.8,.3,1),transform 1s,opacity .5s;letter-spacing:-.045em}
+.zion-intro.is-gathering .zion-intro__verse,.zion-intro.is-wordmark .zion-intro__verse{visibility:hidden;transition:none;transform:none;opacity:1;filter:none}
+.zion-intro__logo{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:0;opacity:0;transition:none;transform:none;pointer-events:none;font:800 clamp(92px,14vw,195px)/.8 var(--display);letter-spacing:-.03em}
+.zion-intro__z{display:inline-block;opacity:0;visibility:hidden;transform:translateX(0) scale(1);transition:transform .7s cubic-bezier(.16,1,.3,1);filter:none}
+.zion-intro__ion{display:inline-block;max-width:0;white-space:nowrap;opacity:0;overflow:hidden;transform:translateX(-.18em);transition:max-width .75s cubic-bezier(.3,.8,.3,1),transform .75s,opacity .25s;letter-spacing:-.045em}
 .zion-intro__dot{color:#c9d8b4}
-.zion-intro.is-forming .zion-intro__logo,.zion-intro.is-wordmark .zion-intro__logo{opacity:1;transform:scale(1)}
-.zion-intro.is-z-ready .zion-intro__z{opacity:1;filter:blur(0);transform:translateX(0) scale(1)}
-.zion-intro.is-wordmark .zion-intro__z{filter:blur(0);transform:translateX(0) scale(1)}
+.zion-intro.is-forming .zion-intro__logo,.zion-intro.is-wordmark .zion-intro__logo{opacity:1;transform:none}
+.zion-intro.is-z-ready .zion-intro__z{opacity:1;visibility:visible;transform:translateX(0) scale(1)}
+.zion-intro.is-z-ready .zion-intro__particle{visibility:hidden}
+.zion-intro.is-wordmark .zion-intro__z{transform:translateX(0) scale(1)}
 .zion-intro.is-wordmark .zion-intro__ion{max-width:2.8em;transform:translateX(0);opacity:1}
-.zion-intro__particle{position:absolute;z-index:4;pointer-events:none;white-space:pre;line-height:1;letter-spacing:-.035em;color:#f0ede1;text-shadow:0 0 10px rgba(232,242,219,.22);will-change:transform,opacity}
+.zion-intro__particle{position:absolute;z-index:4;pointer-events:none;white-space:pre;line-height:1;letter-spacing:-.035em;color:#f0ede1;opacity:1;font-weight:700;will-change:transform,text-shadow}
 .zion-intro.is-exiting{opacity:0;transform:translateY(-40px);pointer-events:none}
 /* Scroll 3D: profundidade discreta, renderização com transform e scroll rAF */
 .zion-motion .depth-reveal{opacity:0;transform:perspective(1200px) translate3d(0,42px,0) rotateX(3deg);transition:opacity .8s ease,transform .95s cubic-bezier(.2,.75,.3,1)}
@@ -172,7 +173,7 @@ body.zion-intro-lock{overflow:hidden}
  .zion-intro__bottom{justify-content:flex-end}
  .zion-intro__quote{font-size:clamp(12px,3.2vw,17px);line-height:1.6}
  .zion-intro__line--second{max-width:310px;margin:auto}
- .zion-intro__logo{font-size:clamp(110px,25vw,210px)}
+ .zion-intro__logo{font-size:clamp(77px,19vw,132px)}
  .zion-intro__source{font-size:9px}
 }
 @media(prefers-reduced-motion:reduce){

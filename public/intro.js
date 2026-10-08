@@ -62,8 +62,11 @@
       return;
     }
 
-    const width = Math.min(210,Math.max(100,frame.width*.18));
-    const height = Math.min(225,Math.max(115,frame.height*.28));
+    // A nuvem de letras desenha as mesmas proporções do Z definitivo.
+    const solidZ = overlay.querySelector('.zion-intro__z');
+    const zRect = solidZ?.getBoundingClientRect();
+    const width = Math.max(42,(zRect?.width || Math.min(160,frame.width*.16))*.83);
+    const height = Math.max(55,(zRect?.height || Math.min(160,frame.height*.22))*.82);
     const fragment = document.createDocumentFragment();
     glyphs.forEach((glyph) => {
       const particle = document.createElement('span');
@@ -87,10 +90,12 @@
       const dy = frame.height/2+target.y-originY;
       const transform = (x,y,size) =>
         'translate3d('+x.toFixed(1)+'px,'+y.toFixed(1)+'px,0) scale('+size+')';
+      // Sem fade: as letras mantêm 100% de opacidade, ficam mais espessas
+      // e se sobrepõem até compor os três traços do Z.
       particles[i].animate([
-        {transform:transform(0,0,1),opacity:1,offset:0},
-        {transform:transform(dx*.7,dy*.7,.72),opacity:1,offset:.7},
-        {transform:transform(dx,dy,.38),opacity:0,offset:1}
+        {transform:transform(0,0,1),textShadow:'0 0 0 transparent',offset:0},
+        {transform:transform(dx*.7,dy*.7,1.03),textShadow:'0 0 1px rgba(240,237,225,.2)',offset:.66},
+        {transform:transform(dx,dy,1.47),textShadow:'0 0 7px rgba(240,237,225,.96), 1px 0 #f0ede1, -1px 0 #f0ede1',offset:1}
       ],{duration:870,delay:(i%12)*10,easing:'cubic-bezier(.65,.02,.23,1)',fill:'forwards'});
     });
   }
@@ -103,6 +108,8 @@
     window.requestAnimationFrame(() => overlay.classList.add('is-typing'))
   );
   timers.push(window.setTimeout(gatherLetters,timing.gather));
+  // Troca a silhueta construída pelas letras pelo Z tipográfico no mesmo
+  // instante; não diminui a opacidade das partículas para escondê-las.
   timers.push(window.setTimeout(() => {if(!ended)overlay.classList.add('is-z-ready');},timing.zReady));
   timers.push(window.setTimeout(() => {if(!ended)overlay.classList.add('is-wordmark');},timing.wordmark));
   timers.push(window.setTimeout(finish,timing.end));
