@@ -13,23 +13,22 @@ Esta branch é uma versão de desenvolvimento. Ainda não foi implantada em prod
 - **Checkout não habilitado**. Não recebe pagamentos ou pedidos nesta fase.
 
 ## Configuração (antes de mesclar/deploy)
-1. No painel do Cloudflare, acesse D1 > banco `zion` e copie o **database_id** do banco.
-2. Substitua `SUBSTITUIR_PELO_ID_DO_D1` em `wrangler.jsonc` pelo UUID do D1. O nome da variável (binding) usado no Worker é `DB`.
-3. Confirme o bucket R2 com nome `zion`. O binding usado no Worker é `MEDIA`.
-4. No Worker, configure **Secrets** (não publique senhas no GitHub):
+1. O `database_id` do D1 `zion` já foi configurado em `wrangler.jsonc` (binding `DB`).
+2. Confirme o bucket R2 `zion` no mesmo ambiente Cloudflare (binding `MEDIA`).
+3. No Worker, configure **Secrets** (não publique senhas no GitHub):
    - `ADMIN_PASSWORD`: senha forte com 12 caracteres ou mais.
    - `SESSION_SECRET`: segredo aleatório de 32 caracteres ou mais, diferente da senha.
-5. Faça a migração do D1 **em produção** (uma vez) antes de acessar o painel:
+4. Faça a migração do D1 **em produção** (uma vez) antes de acessar o painel:
 
 ```bash
 npm install
 npx wrangler d1 migrations apply zion --remote
 ```
 
-6. Teste localmente com `npm run dev`. Em projeto Workers conectado ao GitHub, publique na branch principal após confirmar as configurações e migrações. Caso necessário: `npm run deploy`.
-7. Visite `/admin.html`, entre com a senha secreta, envie imagens de campanhas e cadastre os produtos.
+5. Teste localmente com `npm run dev`. Em projeto Workers conectado ao GitHub, publique na branch principal após confirmar as configurações e migrações. Caso necessário: `npm run deploy`.
+6. Visite `/admin.html`, entre com a senha secreta, envie imagens de campanhas e cadastre os produtos.
 
-> **Importante:** A branch principal atualmente contém a prévia estática anterior. Não faça merge antes de configurar o ID de D1 e as secrets. A conexão do Worker no painel da Cloudflare não pode ser validada somente pelo GitHub.
+> **Importante:** A branch principal atualmente contém a prévia estática anterior. Não faça merge antes de configurar os secrets, aplicar as migrações e testar as rotas protegidas. A conexão do Worker no painel da Cloudflare não pode ser validada somente pelo GitHub.
 
 ## Organização das fotos
 Envie diretamente de seus arquivos para o painel, não é necessário um link público do iCloud.
