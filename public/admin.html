@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow"><title>ZION | Administração</title><meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/admin.css">
+</head>
+<body>
+<header class="admin-header"><a href="/" class="wordmark" aria-label="Zion — Página inicial">ZION<span>.</span></a><span>PAINEL ADMINISTRATIVO</span><button id="logoutButton" class="outline small" type="button" hidden>Sair</button></header>
+<main>
+<section id="loginView" class="login-wrap">
+<p class="kicker">ACESSO RESTRITO</p><h1>Gestão da<br><em>Zion Clothing.</em></h1>
+<p class="muted">Cadastre produtos, controle tamanhos e escolha as fotos das campanhas.</p>
+<form id="loginForm" class="card login-form"><label for="password">SENHA DO ADMINISTRADOR</label><input id="password" type="password" inputmode="numeric" pattern="[0-9]{4}" autocomplete="current-password" minlength="4" maxlength="4" required placeholder="PIN de 4 dígitos"><button class="solid" type="submit">Entrar no painel ↗</button></form>
+</section>
+<section id="dashboard" hidden>
+<div class="dashboard-heading"><div><p class="kicker">ZION / GESTÃO</p><h1>Seu catálogo,<br><em>suas campanhas.</em></h1></div><p class="muted">As imagens ficam no R2. Os produtos e estoques ficam no D1.</p></div>
+<nav class="tabs" aria-label="Seções do painel"><button class="active" data-tab="products" type="button">Produtos</button><button data-tab="media" type="button">Banco de imagens</button></nav>
+<section id="productsSection">
+<div class="two-column">
+<div class="card"><div class="card-title"><h2 id="formTitle">Cadastrar produto</h2><button id="resetProduct" type="button" class="outline small">Limpar</button></div>
+<form id="productForm" class="stack">
+<label>Nome do produto<input name="name" required maxlength="140" placeholder="Ex.: Camiseta Zion Oversized"></label>
+<div class="fields-two"><label>Preço (R$)<input name="price" type="number" min="0" max="100000" step="0.01" required placeholder="129.90"></label><label>Categoria<select name="category"><option>Unissex</option><option>Masculino</option><option>Feminino</option><option>Acessórios</option></select></label></div>
+<label>Descrição<textarea name="description" maxlength="2000" rows="3" placeholder="Tecido, modelagem, composição e cuidados"></textarea></label>
+<label>Tamanhos e estoque <small>(ex.: P:10, M:5, G:8, GG:3)</small><input name="stock" required placeholder="P:10, M:5, G:8, GG:3"></label>
+<label>Etiqueta de destaque<input name="tag" maxlength="35" placeholder="NOVO / EXCLUSIVO"></label>
+<label class="checkline"><input name="active" type="checkbox" checked> Produto visível no site</label>
+<div><p class="label">FOTOS DESTE PRODUTO <small>(selecione até 8)</small></p><div id="productImagePicker" class="photo-picker"></div>
+<label class="upload-inline">Adicionar fotos ao produto<input id="quickProductPhotos" type="file" accept="image/jpeg,image/png,image/webp,image/avif" multiple></label></div>
+<button class="solid" id="saveProduct" type="submit">Salvar produto ↗</button>
+</form>
+</div>
+<div class="card"><div class="card-title"><h2>Produtos cadastrados</h2><span id="productTotal" class="muted"></span></div><div id="productList" class="item-list"></div></div>
+</div>
+</section>
+<section id="mediaSection" hidden>
+<div class="two-column">
+<div class="card"><h2>Adicionar fotografias</h2><p class="muted">As fotos editoriais são escolhidas automaticamente para cada seção da Home, com rotação a cada 3 horas.</p>
+<form id="uploadForm" class="stack">
+<label>Tipo de fotografia<select name="kind" id="mediaKind"><option value="editorial">Editorial / Home</option><option value="product">Produto / catálogo</option></select></label>
+<label id="slotLabel">Onde vai aparecer<select name="slot" id="mediaSlot"><option value="hero">Capa principal</option><option value="feminino">Editorial feminino</option><option value="masculino">Editorial masculino</option><option value="campanha">Campanha intermediária</option><option value="geral">Todas as posições</option></select></label>
+<label>Legenda / identificação<input name="title" maxlength="140" placeholder="Ex.: Campanha Zion 2026"></label>
+<label>Selecionar fotos <small>(JPG, PNG, WEBP ou AVIF — 8 MB por arquivo)</small><input name="photos" type="file" accept="image/jpeg,image/png,image/webp,image/avif" multiple required></label>
+<button class="solid" id="uploadButton" type="submit">Enviar imagens ao R2 ↗</button>
+</form></div>
+<div class="card"><div class="card-title"><h2>Banco de imagens</h2><span id="mediaTotal" class="muted"></span></div><div id="mediaList" class="media-list"></div></div>
+</div>
+</section>
+</section>
+<p class="status" id="feedback" role="status" aria-live="polite"></p>
+</main>
+<script defer src="/admin.js"></script>
+</body></html>

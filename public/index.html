@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f7f7f3">
+  <meta name="description" content="ZION CLOTHING — streetwear com propósito.">
+  <meta property="og:title" content="ZION | Nova coleção">
+  <meta property="og:description" content="Zion Clothing. Estilo com propósito.">
+  <title>ZION — Nova Coleção</title>
+  <link rel="preconnect" href="https://images.unsplash.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;450;500;550;600;700&family=Italiana&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  
+</head>
+<body>
+  <a class="skip-link" href="#conteudo">Ir para o conteúdo</a>
+  <div class="announcement">ZION CLOTHING — EXPRESSÃO E PROPÓSITO</div>
+  <header class="site-header is-over-hero" id="header">
+    <div class="header-left">
+      <button class="icon-button menu-btn" id="menuButton" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="menuPanel">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M2 7h20M2 12h20M2 17h20" stroke="currentColor" stroke-width="1.4"/></svg>
+      </button>
+      <nav class="desktop-navigation" aria-label="Categorias principais">
+        <button type="button" data-shop-category="Feminino">FEMININO</button>
+        <button type="button" data-shop-category="Masculino">MASCULINO</button>
+        <button type="button" data-shop-category="Todos">NOVIDADES</button>
+      </nav>
+    </div>
+    <a class="brand" id="brandLogo" href="#inicio" aria-label="Zion, página inicial">ZION<span class="brand-dot">.</span></a>
+    <div class="header-actions">
+      <button class="icon-button" id="searchButton" type="button" aria-label="Buscar produtos" aria-controls="searchPanel" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none"><circle cx="10.8" cy="10.8" r="6.7" stroke="currentColor" stroke-width="1.5"/><path d="m16 16 5 5" stroke="currentColor" stroke-width="1.5"/></svg>
+      </button>
+      <button class="icon-button favorites-button" id="favoritesButton" type="button" aria-label="Ver favoritos">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 20.7 4 12.6C-1 7.6 6 1.2 12 7.6c6-6.4 13 0 8 5l-8 8.1Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+        <span class="icon-count hidden" id="favoritesCount">0</span>
+      </button>
+      <button class="icon-button" id="cartButton" type="button" aria-label="Abrir sacola" aria-controls="cartPanel" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M4 8h16l-1.2 12H5.2L4 8Z" stroke="currentColor" stroke-width="1.4"/><path d="M9 9V6a3 3 0 0 1 6 0v3" stroke="currentColor" stroke-width="1.4"/></svg>
+        <span class="icon-count hidden" id="cartCount">0</span>
+      </button>
+    </div>
+  </header>
+
+  <main id="conteudo">
+    <section id="inicio" class="hero" aria-label="Campanha da nova coleção">
+      <div class="hero-bg"></div>
+      <div class="hero-shade"></div>
+      <div class="hero-caption hero-caption-top"><span>COLLECTION / 01</span><span>ZION — BRASIL</span></div>
+      <div class="hero-content">
+        <p class="eyebrow light">A NOVA COLEÇÃO / 2026</p>
+        <h1>O essencial<br>é extraordinário<span class="h1-period">.</span></h1>
+        <p class="hero-desc">Peças que acompanham cada versão de você.</p>
+        <button class="button-underline button-white" id="heroShopBtn" type="button">EXPLORAR COLEÇÃO <span aria-hidden="true">↗</span></button>
+      </div>
+      <div class="hero-caption hero-caption-bottom"><span>01 / 03 &nbsp; NOVAS PERSPECTIVAS</span><span>DESLIZE PARA DESCOBRIR &nbsp; ↓</span></div>
+    </section>
+
+    <section class="collection-intro section-container">
+      <div class="section-index"><span>01 — NOVA ESTAÇÃO</span><span>SELEÇÃO ZION</span></div>
+      <div class="collection-intro-body"><p>ESTILO SEM EXCESSOS</p><h2>Uma expressão<br>de <em>quem você é.</em></h2><p>Silhuetas contemporâneas, texturas que inspiram e uma seleção de peças para uma vida em movimento.</p></div>
+    </section>
+
+    <section class="editorial-grid" aria-label="Coleções por categoria">
+      <article class="editorial-tile tile-woman">
+        <div class="tile-photo" role="img" aria-label="Editorial de moda feminina"></div>
+        <div class="tile-scrim"></div>
+        <div class="tile-top">01 / WOMAN</div>
+        <div class="tile-caption"><span>UMA NOVA SILHUETA</span><h2>Feminino</h2><button type="button" class="button-underline button-white" data-shop-category="Feminino">DESCUBRA A COLEÇÃO <span>↗</span></button></div>
+      </article>
+      <article class="editorial-tile tile-man">
+        <div class="tile-photo" role="img" aria-label="Editorial de moda masculina"></div>
+        <div class="tile-scrim"></div>
+        <div class="tile-top">02 / MAN</div>
+        <div class="tile-caption"><span>O ESSENCIAL REINVENTADO</span><h2>Masculino</h2><button type="button" class="button-underline button-white" data-shop-category="Masculino">DESCUBRA A COLEÇÃO <span>↗</span></button></div>
+      </article>
+    </section>
+
+    <section id="catalogo" class="catalog section-container">
+      <div class="section-index"><span>02 — PEÇAS EM DESTAQUE</span><span>CURADORIA DA ESTAÇÃO</span></div>
+      <div class="catalog-heading"><div><p class="eyebrow">SELECIONADOS PARA VOCÊ</p><h2>Descubra o novo<span>.</span></h2></div><p>Redescubra o vestir através de peças versáteis, feitas para todas as suas histórias.</p></div>
+      <div class="catalog-tools">
+        <div class="tabs" role="group" aria-label="Filtrar por coleção">
+          <button class="tab active" type="button" data-filter="Todos">VER TUDO</button>
+          <button class="tab" type="button" data-filter="Feminino">FEMININO</button>
+          <button class="tab" type="button" data-filter="Masculino">MASCULINO</button>
+          <button class="tab" type="button" data-filter="Acessórios">ACESSÓRIOS</button>
+        </div>
+        <div class="catalog-actions">
+          <span id="productCount" class="product-count">0 PRODUTOS</span>
+          <label class="sort-label" for="sortSelect">ORDENAR POR <span aria-hidden="true">⌄</span></label>
+          <select id="sortSelect" aria-label="Ordenar produtos">
+            <option value="featured">DESTAQUES</option><option value="newest">MAIS RECENTES</option><option value="low">MENOR PREÇO</option><option value="high">MAIOR PREÇO</option>
+          </select>
+        </div>
+      </div>
+      <div class="products-grid" id="productsGrid" aria-live="polite"></div>
+      <div class="more-row"><button type="button" class="outlined-button" id="viewAllButton">VER TODAS AS PEÇAS <span>↗</span></button></div>
+    </section>
+
+    <section class="campaign">
+      <div class="campaign-photo" role="img" aria-label="Detalhe de editorial de moda"></div>
+      <div class="campaign-copy"><span class="eyebrow">THE EDIT / EDIÇÃO 01</span><p class="campaign-overline">MENOS É MAIS, SEMPRE.</p><h2>O que permanece<br>é o que <em>importa.</em></h2><p>Uma curadoria de essenciais atemporais. Porque vestir-se bem é, antes de tudo, sentir-se você.</p><button type="button" class="button-underline" id="campaignButton">CONHEÇA A SELEÇÃO <span>↗</span></button></div>
+    </section>
+
+    <section class="newsletter section-container" id="newsletter"><span class="eyebrow">FIQUE POR DENTRO</span><h2>Algo novo está<br><em>sempre chegando.</em></h2><p>Novas coleções, editoriais e novidades. Diretamente no seu e-mail.</p><form id="newsletterForm" class="newsletter-form"><label class="sr-only" for="newsletterEmail">Seu e-mail</label><input id="newsletterEmail" required type="email" placeholder="SEU ENDEREÇO DE E-MAIL" autocomplete="email"><button type="submit" aria-label="Cadastrar e-mail">↗</button></form><small>Prévia demonstrativa. O cadastro de e-mails será ativado com a integração.</small></section>
+  </main>
+
+  <footer class="footer"><div class="footer-top"><div class="footer-brand">ZION<span>.</span><p>Uma nova forma de vestir.</p></div><div class="footer-links"><div><h3>EXPLORE</h3><button data-shop-category="Feminino">Feminino</button><button data-shop-category="Masculino">Masculino</button><button data-shop-category="Todos">Nova coleção</button></div><div><h3>INFORMAÇÕES</h3><button type="button" data-info="Entrega e trocas">Entregas e trocas</button><button type="button" data-info="Privacidade">Privacidade</button><button type="button" data-info="Contato">Contato</button></div><div><h3>CONECTE-SE</h3><button type="button" data-info="Instagram">Instagram</button><button type="button" data-info="WhatsApp">WhatsApp</button><button type="button" data-scroll="#newsletter">Newsletter</button></div></div></div><div class="footer-bottom"><span>© 2026 ZION CLOTHING.</span><span>DESIGN COM INTENÇÃO — FEITO PARA SUA MARCA</span><a href="#inicio">VOLTAR AO TOPO ↑</a> <a href="/admin.html" rel="nofollow">ADMIN</a></div></footer>
+
+  <div id="overlay" class="overlay" hidden></div>
+
+  <aside class="side-panel menu-panel" id="menuPanel" role="dialog" aria-modal="true" aria-label="Menu de navegação" aria-hidden="true">
+    <div class="panel-head"><span>MENU / NAVEGAÇÃO</span><button class="panel-close" type="button" data-close aria-label="Fechar menu">×</button></div>
+    <div class="menu-big"><button data-shop-category="Todos">Novidades <span>↗</span></button><button data-shop-category="Feminino">Feminino <span>↗</span></button><button data-shop-category="Masculino">Masculino <span>↗</span></button><button data-shop-category="Acessórios">Acessórios <span>↗</span></button><button type="button" id="menuFavorites">Favoritos <span>♡</span></button></div>
+    <div class="menu-bottom"><p>DESIGN PARA O COTIDIANO</p><p>UMA NOVA FORMA DE VESTIR.</p></div>
+  </aside>
+
+  <aside class="side-panel search-panel" id="searchPanel" role="dialog" aria-modal="true" aria-label="Buscar produtos" aria-hidden="true">
+    <div class="panel-head"><span>ENCONTRE SUA PEÇA</span><button class="panel-close" type="button" data-close aria-label="Fechar busca">×</button></div>
+    <div class="search-input-wrap"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="6.5" stroke="currentColor"/><path d="m15 15 6 6" stroke="currentColor"/></svg><input id="searchInput" type="search" placeholder="O que você procura?" aria-label="Pesquisar produtos"></div><p class="small-label">RESULTADOS</p><div class="panel-results" id="searchResults"></div>
+  </aside>
+
+  <aside class="side-panel cart-panel" id="cartPanel" role="dialog" aria-modal="true" aria-label="Sua sacola" aria-hidden="true">
+    <div class="panel-head"><span>SUA SACOLA <span id="cartHeadingCount">(0)</span></span><button class="panel-close" type="button" data-close aria-label="Fechar sacola">×</button></div>
+    <div id="cartContents" class="cart-contents"></div>
+    <div class="cart-bottom" id="cartBottom"><div class="cart-total"><span>SUBTOTAL</span><strong id="cartTotal">R$ 0,00</strong></div><p>Pagamento e entrega serão integrados em breve.</p><button class="solid-button" type="button" id="checkoutButton">FINALIZAR PEDIDO <span>↗</span></button><small>Pagamento ainda não disponível. A loja está em preparação.</small></div>
+  </aside>
+
+  <aside class="side-panel cart-panel" id="favoritesPanel" role="dialog" aria-modal="true" aria-label="Produtos favoritos" aria-hidden="true"><div class="panel-head"><span>SEUS FAVORITOS</span><button class="panel-close" type="button" data-close aria-label="Fechar favoritos">×</button></div><div class="panel-results favorites-results" id="favoritesResults"></div></aside>
+
+  <div class="product-modal" id="productModal" role="dialog" aria-modal="true" aria-label="Detalhes do produto" aria-hidden="true"><button class="modal-close" type="button" data-close aria-label="Fechar detalhes">×</button><div class="modal-photo"><img id="modalImage" alt=""></div><div class="modal-information"><span class="eyebrow">ZION / COLEÇÃO 2026</span><h2 id="modalTitle"></h2><p id="modalPrice" class="modal-price"></p><p id="modalDescription" class="modal-description"></p><div class="size-heading"><span>SELECIONE O TAMANHO</span><span id="sizeFeedback"></span></div><div class="size-options" id="sizeOptions"></div><button class="solid-button" id="addToCartButton" type="button">ADICIONAR À SACOLA <span>↗</span></button><p class="modal-footnote">Consulte a disponibilidade de tamanhos e estoque.</p></div></div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script defer src="app.js"></script>
+</body>
+</html>

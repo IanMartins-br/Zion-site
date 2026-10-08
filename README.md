@@ -1,23 +1,53 @@
-# ZION — prévia do site oficial
+# ZION CLOTHING — vitrine + administração (Cloudflare Workers, D1 e R2)
 
-Primeira versão demonstrativa do site da Zion, inspirada na linguagem editorial de e-commerces de moda. Layout original, responsivo e com identidade temporária da Zion.
+Projeto da loja Zion. Instagram: https://instagram.com/usezion.ofc
 
-Instagram oficial: https://www.instagram.com/usezion.ofc/
+## Estado atual
+Esta branch é uma versão de desenvolvimento. Ainda não foi implantada em produção.
+- Front-end responsivo em `public/`.
+- Vitrine alimentada pelo D1, inicialmente sem produtos fictícios.
+- Editorais do R2 com rotação de imagem a cada 3 horas na Home.
+- Painel protegido em `/admin`, com cadastro/edição/remoção de produtos, estoque por tamanho, fotos e visibilidade.
+- Upload de fotos (JPG/PNG/WEBP/AVIF até 8 MB por arquivo) no R2; acervo editorial separado do catálogo.
+- API no Worker em `src/worker.js`.
+- **Checkout não habilitado**. Não recebe pagamentos ou pedidos nesta fase.
 
-## Funcionalidades de demonstração
-- Home editorial e catálogo responsivo
-- Busca, filtros e ordenação
-- Modal de produto com tamanhos
-- Favoritos e sacola com armazenamento local
-- Navegação desktop/mobile
+## Configuração (antes de mesclar/deploy)
+1. O `database_id` do D1 `zion` já foi configurado em `wrangler.jsonc` (binding `DB`).
+2. Confirme o bucket R2 `zion` no mesmo ambiente Cloudflare (binding `MEDIA`).
+3. No Worker, configure **Secrets** (não publique senhas no GitHub):
+   - `ADMIN_PASSWORD`: senha forte com 4 dígitos (PIN temporário).
+4. Faça a migração do D1 **em produção** (uma vez) antes de acessar o painel:
 
-## Atenção
-**Este projeto é uma prévia, não uma loja pronta para vendas.** Os 12 produtos, preços e imagens são ilustrativos. Checkout e newsletter não processam transações nem cadastros.
+```bash
+npm install
+npx wrangler d1 migrations apply zion --remote
+```
 
-Antes do lançamento comercial, integrar produtos e estoque reais, pedidos, checkout Pix/cartão, frete, dados de contato e políticas de privacidade e trocas. Substituir as imagens de demonstração por fotos da Zion devidamente autorizadas.
+5. Teste localmente com `npm run dev`. Em projeto Workers conectado ao GitHub, publique na branch principal após confirmar as configurações e migrações. Caso necessário: `npm run deploy`.
+6. Visite `/admin.html`, entre com a senha secreta, envie imagens de campanhas e cadastre os produtos.
 
-## Executar
-Arquivos HTML, CSS e JS estáticos. Abrir `index.html` no navegador ou rodar um servidor estático na raiz. Fotos e fontes são carregadas externamente.
+> **Importante:** A branch principal atualmente contém a prévia estática anterior. Confirme a configuração do Secret `ADMIN_PASSWORD` (PIN de 4 dígitos) no Worker e teste as rotas protegidas antes de usar o painel. O PIN de 4 dígitos oferece proteção fraca: alterar por uma senha forte antes de colocar produtos reais. A conexão do Worker no painel da Cloudflare não pode ser validada somente pelo GitHub.
 
-## Cloudflare Pages
-Conecte este repositório à Cloudflare Pages, branch `main`, sem comando de build, e use `/` como diretório de saída. O domínio e o deploy ainda precisam ser configurados na Cloudflare.
+## Organização das fotos
+Envie diretamente de seus arquivos para o painel, não é necessário um link público do iCloud.
+- **Editorias:** `hero`, `feminino`, `masculino`, `campanha` ou `geral` (a cada 3 h troca de foto).
+- **Produtos:** foto(s) de um produto, escolhidas e ordenadas pelo seu cadastro (limite atual de 8; primeira como capa).
+
+## Segurança e limites
+- Sessão por cookie HTTP-only, Secure, SameSite Strict, expira após 12 h.
+- Login temporário por PIN de 4 dígitos limitado a seis tentativas por IP por 15 min, via D1. Não é recomendado para produção comercial.
+- Mudanças administrativas requerem login e origem do próprio site.
+- SQL parametrizado; tamanho e tipo de arquivo restritos.
+- Endpoints `/api/products` e `/api/editorials` são públicos e só retornam registros visíveis.
+- Antes de lançar venda real, implementar checkout/pedidos seguros, cálculo de frete, política de trocas e privacidade, conformidade LGPD e audit trail para alteração de estoque.
+
+## Arquivos
+- `src/worker.js`: API e R2 media proxy.
+- `migrations/0001_zion_catalog.sql`: tabelas D1.
+- `public/index.html`, `public/styles.css`, `public/app.js`: vitrine.
+- `public/admin.html`, `public/admin.css`, `public/admin.js`: admin.
+
+## Acesso provisório ao painel
+
+O PIN não é armazenado no repositório. Configure `ADMIN_PASSWORD` como **Secret** no painel Cloudflare Worker `zion-site`. O formulário fica em `/admin`, protegido por sessão HTTP-only e rate limiting. **Não exponha o PIN publicamente.**
