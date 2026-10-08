@@ -148,12 +148,13 @@ body.zion-intro-lock{overflow:hidden}
 .zion-intro.is-gathering .zion-intro__verse,.zion-intro.is-wordmark .zion-intro__verse{visibility:hidden;transition:none;transform:none;opacity:1;filter:none}
 .zion-intro__logo{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:0;opacity:0;transition:none;transform:none;pointer-events:none;font:800 clamp(92px,14vw,195px)/.8 var(--display);letter-spacing:-.03em}
 .zion-intro__wordmark{position:relative;display:inline-flex;align-items:center;justify-content:center;transform:translate3d(0,0,0);transition:transform .95s cubic-bezier(.24,.78,.22,1);will-change:transform}
-.zion-intro__z{display:inline-block;opacity:0;visibility:hidden;transform:none;transition:none;filter:none}
+.zion-intro__z{display:inline-block;opacity:0;visibility:hidden;transform:none;filter:none;clip-path:circle(0% at 50% 50%);transition:clip-path .26s cubic-bezier(.18,.75,.35,1)}
 .zion-intro__ion{position:absolute;left:100%;top:0;display:block;white-space:nowrap;max-width:none;opacity:1;overflow:visible;clip-path:inset(0 100% 0 0);transform:translate3d(-.12em,0,0);transition:clip-path .82s cubic-bezier(.25,.65,.22,1),transform .82s cubic-bezier(.25,.65,.22,1);letter-spacing:-.045em}
 .zion-intro__dot{color:#c9d8b4}
 .zion-intro.is-forming .zion-intro__logo,.zion-intro.is-wordmark .zion-intro__logo{opacity:1;transform:none}
-.zion-intro.is-z-ready .zion-intro__z{opacity:1;visibility:visible}
-.zion-intro.is-z-ready .zion-intro__particle{visibility:hidden}
+/* O Z final cresce sob a nuvem de letras; cada caractere se comprime
+   dentro da silhueta, sem desaparecer abruptamente. */
+.zion-intro.is-z-ready .zion-intro__z{opacity:1;visibility:visible;clip-path:circle(85% at 50% 50%)}
 /* O Z começa no centro e desliza como um único conjunto. O sufixo fica
    fora do fluxo para não empurrá-lo abruptamente ao expandir. */
 .zion-intro.is-wordmark:not(.is-smooth-wordmark) .zion-intro__wordmark{transform:translate3d(var(--zion-ion-shift,-1.15em),0,0)}
@@ -161,7 +162,7 @@ body.zion-intro-lock{overflow:hidden}
 /* A animação sincronizada é controlada por quadros compostos no navegador.
    O CSS de fallback só entra em ação se Web Animations não estiver disponível. */
 .zion-intro.is-smooth-wordmark .zion-intro__wordmark,.zion-intro.is-smooth-wordmark .zion-intro__ion{transition:none;backface-visibility:hidden}
-.zion-intro__particle{position:absolute;z-index:4;pointer-events:none;white-space:pre;line-height:1;letter-spacing:-.035em;color:#f0ede1;opacity:1;font-weight:700;will-change:transform,text-shadow}
+.zion-intro__particle{position:absolute;z-index:4;pointer-events:none;white-space:pre;line-height:inherit;letter-spacing:inherit;color:#f0ede1;opacity:1;font-weight:400;transform-origin:center center;will-change:transform,text-shadow}
 .zion-intro.is-exiting{opacity:0;transform:translateY(-40px);pointer-events:none}
 /* Scroll 3D: profundidade discreta, renderização com transform e scroll rAF */
 .zion-motion .depth-reveal{opacity:0;transform:perspective(1200px) translate3d(0,42px,0) rotateX(3deg);transition:opacity .8s ease,transform .95s cubic-bezier(.2,.75,.3,1)}
