@@ -261,34 +261,6 @@ async function loadEditorials(){
     for(const [slot,selector] of sections)cyclePhotos(images,slot,selector,3);
   }catch(error){console.info('Galeria R2 ainda não configurada.');}
 }
-function startZionIntro(){
-  const overlay=document.getElementById('zionIntro');
-  if(!overlay)return;
-  const reduce=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-  let seen=false;
-  try{seen=sessionStorage.getItem('zion-opening-v1')==='seen'}catch{}
-  if(seen||reduce){overlay.remove();return}
-  const timers=[];
-  let ended=false;
-  const onKeydown=e=>{if(e.key==='Escape')finish()};
-  function finish(){
-    if(ended)return;
-    ended=true;timers.forEach(clearTimeout);
-    document.removeEventListener('keydown',onKeydown);
-    overlay.classList.add('is-exiting');
-    document.body.classList.remove('zion-intro-lock');
-    try{sessionStorage.setItem('zion-opening-v1','seen')}catch{}
-    setTimeout(()=>overlay.remove(),900);
-  }
-  overlay.hidden=false;
-  document.body.classList.add('zion-intro-lock');
-  document.getElementById('skipZionIntro')?.addEventListener('click',finish,{once:true});
-  document.addEventListener('keydown',onKeydown);
-  requestAnimationFrame(()=>overlay.classList.add('is-typing'));
-  timers.push(setTimeout(()=>overlay.classList.add('is-forming'),3550));
-  timers.push(setTimeout(()=>overlay.classList.add('is-wordmark'),4450));
-  timers.push(setTimeout(finish,6100));
-}
 function initZionScrollMotion(){
   if(!('IntersectionObserver' in window)||window.matchMedia?.('(prefers-reduced-motion: reduce)').matches)return;
   const revealNodes=[...document.querySelectorAll('.collection-intro-body,.editorial-tile,.catalog-heading,.zion-lookbook-item,.movement-banner,.campaign-copy,.community-side')];
@@ -325,7 +297,7 @@ function initZionScrollMotion(){
   window.addEventListener('resize',tick,{passive:true});
   tick();
 }
-startZionIntro();
+// A abertura é inicializada de forma independente em intro.js.
 initZionScrollMotion();
 loadCatalog();
 loadEditorials();
