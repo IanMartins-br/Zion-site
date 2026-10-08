@@ -12,3 +12,86 @@
 
 [hidden]{display:none!important}
 
+
+
+/* ZION / STREETWEAR EDITORIAL — design system v2
+   Zara: fotografia editorial; Romã: clareza e fluidez comercial.
+   Aplicação original para a Zion Clothing. */
+:root{--ink:#1c211c;--paper:#f1efe9;--neutral:#e4e2d9;--muted:#74786e;--olive:#b3baa4;--pine:#1d2921;--display:'Barlow Condensed','Arial Narrow',sans-serif}
+body{background:var(--paper)}
+.announcement{height:36px;display:flex;justify-content:space-between;align-items:center;background:var(--pine);color:#e7e8df;padding:0 clamp(18px,4vw,70px);font-size:9px;letter-spacing:.18em;font-weight:600;gap:16px}
+.announcement a{color:#e7e8df;text-decoration:none}.announcement a:hover{text-decoration:underline}
+.brand{font-family:var(--display)!important;font-weight:800!important;letter-spacing:.025em!important;line-height:.7!important;display:flex;align-items:flex-end;gap:3px}.brand small{font:600 7px/1 var(--sans);letter-spacing:.16em;transform:translateY(5px)}
+.hero{height:min(960px,calc(100svh - 36px));min-height:650px;background:var(--pine)}
+.hero-bg{filter:saturate(.72) contrast(1.08);background-position:center 36%}
+.hero-shade{background:linear-gradient(90deg,rgba(16,25,19,.74) 0%,rgba(16,25,19,.20) 66%,rgba(16,25,19,.15) 100%),linear-gradient(0deg,rgba(0,0,0,.34),transparent 32%)}
+.hero::after{content:'ZION';font:800 clamp(220px,35vw,630px)/.76 var(--display);position:absolute;left:50%;bottom:3%;transform:translateX(-50%);opacity:.1;letter-spacing:-.045em;pointer-events:none;white-space:nowrap}
+.hero-content{z-index:2}.hero-content h1{font:700 clamp(86px,10.5vw,185px)/.75 var(--display);letter-spacing:-.015em;margin:.17em 0 .24em;text-transform:uppercase}
+.hero-content h1 em{font-family:var(--serif);font-style:normal;font-size:.65em;letter-spacing:-.06em;text-transform:none;font-weight:400}
+.hero-content .hero-desc{max-width:390px;font-size:clamp(13px,1.2vw,16px);line-height:1.7}
+.hero-caption-top,.hero-caption-bottom{z-index:3}
+.hero-content .eyebrow{letter-spacing:.22em}
+.values-ticker{background:#d2d7c5;padding:19px 0;display:flex;justify-content:space-around;align-items:center;overflow:hidden;white-space:nowrap;gap:30px;color:#263129;letter-spacing:.2em;font-size:10px;font-weight:700}
+.ticker-star{font-size:19px;opacity:.63}
+.collection-intro{padding-top:clamp(96px,11vw,175px)!important;padding-bottom:clamp(105px,13vw,195px)!important}
+.collection-intro-body h2{font-family:var(--display)!important;font-size:clamp(65px,9vw,155px)!important;font-weight:600!important;letter-spacing:-.025em!important;line-height:.86!important;text-transform:uppercase}
+.collection-intro-body h2 em{font-family:var(--serif);font-size:.63em;letter-spacing:-.045em;text-transform:none;line-height:1.18;display:inline-block;color:#6e7a6d}
+.editorial-grid{gap:8px;min-height:690px}
+.editorial-tile{background:#5a665b}.tile-photo{filter:saturate(.8)}
+.tile-caption h2{font:600 clamp(52px,5.6vw,100px)/.91 var(--display)!important;letter-spacing:-.02em!important;text-transform:uppercase}
+.tile-caption h2 em{font:400 .7em/1 var(--serif);text-transform:none}
+.tile-top,.tile-caption>span{letter-spacing:.22em}
+.catalog{padding-top:clamp(90px,10vw,150px)!important;padding-bottom:clamp(90px,9vw,135px)!important}
+.catalog-heading h2{font:600 clamp(64px,7.8vw,137px)/.85 var(--display)!important;letter-spacing:-.02em!important;text-transform:uppercase}
+.catalog-heading h2 em{font:400 .66em/1.05 var(--serif);color:#7e8a79;text-transform:none;letter-spacing:-.05em}
+.catalog-tools{border-top:1px solid #c7c7bb;border-bottom:1px solid #c7c7bb;padding-top:13px;padding-bottom:13px}
+.tabs .tab{font-size:10px;letter-spacing:.12em}
+.products-grid{gap:44px 14px}
+.product-image-wrap{background:#e1e0da}
+.product-card .product-title{font-weight:600}
+.catalog-empty{grid-column:1/-1;min-height:400px;text-align:center;display:flex;flex-direction:column;justify-content:center;align-items:center;background:#e5e7df;padding:35px}
+.catalog-empty h3{font:600 clamp(56px,8vw,110px)/.86 var(--display);letter-spacing:-.02em;text-transform:uppercase;margin:23px 0}
+.catalog-empty h3 em{font:400 .64em/1 var(--serif);text-transform:none;color:#778576}
+.catalog-empty p{max-width:390px;line-height:1.75;color:#656b63}
+.catalog-empty a{text-decoration:underline;text-underline-offset:3px;color:#263b2d}
+.movement-banner{min-height:480px;padding:60px clamp(20px,6vw,100px);background:#202c23;color:#e8eadf;display:flex;flex-direction:column;align-items:center;justify-content:space-between;text-align:center}
+.movement-kicker,.movement-caption{font-size:10px;letter-spacing:.2em}
+.movement-banner>p{font:700 clamp(92px,16vw,275px)/.72 var(--display);letter-spacing:-.02em;margin:45px 0;text-transform:uppercase}
+.movement-banner em{font:400 .75em/1 var(--serif);text-transform:none;color:#b9c3ad}
+.campaign{background:#dfe3d7}.campaign-copy h2{font:600 clamp(60px,6vw,112px)/.9 var(--display)!important;text-transform:uppercase;letter-spacing:-.018em!important}
+.campaign-copy h2 em{font:400 .75em/1 var(--serif);text-transform:none;color:#798573}
+.community{padding-top:clamp(90px,10vw,150px)!important;padding-bottom:clamp(95px,10vw,155px)!important;display:flex;gap:35px;align-items:end;justify-content:space-between;border-top:1px solid #d3d5c9}
+.community h2{font:600 clamp(70px,9vw,150px)/.84 var(--display);text-transform:uppercase;letter-spacing:-.02em;margin:28px 0 0}
+.community h2 em{font:400 .7em/1 var(--serif);text-transform:none;color:#788875}
+.community-side{max-width:300px;margin-bottom:10px;font-size:13px;color:#6a6f68;line-height:1.85}
+.community-link{display:inline-flex;justify-content:space-between;align-items:center;gap:30px;border-bottom:1px solid #2e3930;padding:12px 0;margin-top:23px;font-size:11px;letter-spacing:.09em;color:#1d2921;font-weight:700}
+.community-link:hover{border-color:#76956e;color:#556c50}
+.footer-brand{font-family:var(--display);font-weight:700}
+.footer-brand p{font-family:var(--sans)}
+.footer-links a{display:block;font-size:13px;line-height:2.5}
+@media(max-width:800px){
+ .announcement{justify-content:center;padding:0 12px;font-size:9px}.announcement-center,.announcement a{display:none}
+ .hero{height:86svh;min-height:610px}
+ .hero-content h1{font-size:clamp(78px,16vw,135px)}
+ .hero::after{font-size:55vw;bottom:9%}
+ .values-ticker{justify-content:center;gap:24px;font-size:9px}
+ .values-ticker span:nth-child(n+6){display:none}
+ .community{flex-direction:column;align-items:flex-start}
+ .community-side{max-width:520px}
+ .editorial-grid{min-height:0}
+}
+@media(max-width:560px){
+ .hero{min-height:600px}
+ .hero-content h1{font-size:clamp(68px,18vw,106px);line-height:.82}
+ .hero-content h1 em{font-size:.75em}
+ .hero-caption-top,.hero-caption-bottom{font-size:9px}
+ .values-ticker{padding:16px 0;gap:18px}
+ .values-ticker span:nth-child(n+4){display:none}
+ .collection-intro-body h2{font-size:clamp(59px,16vw,90px)!important}
+ .catalog-heading h2{font-size:clamp(57px,15vw,85px)!important}
+ .editorial-grid{gap:4px}
+ .tile-caption h2{font-size:64px!important}
+ .movement-banner{min-height:335px;padding:38px 18px}
+ .movement-banner>p{font-size:clamp(74px,19vw,125px);margin:25px 0}
+ .community h2{font-size:clamp(59px,15vw,100px)}
+}
