@@ -9,10 +9,14 @@
 <link rel="stylesheet" href="/admin.css">
 </head>
 <body>
-<header class="admin-header"><a href="/" class="wordmark" aria-label="Zion — Página inicial">ZION<span>.</span></a><span>PAINEL ADMINISTRATIVO</span><a href="/" class="outline small">Ver loja ↗</a></header>
+<header class="admin-header"><a href="/" class="wordmark" aria-label="Zion — Página inicial">ZION<span>.</span></a><span>PAINEL ADMINISTRATIVO</span><button id="logoutButton" class="outline small" type="button" hidden>Sair</button></header>
 <main>
-<section id="dashboard">
-<p class="security-warning"><strong>EDIÇÃO PÚBLICA TEMPORÁRIA.</strong> Qualquer pessoa pode alterar ou excluir produtos e imagens enquanto este painel estiver sem senha.</p>
+<section id="loginView" class="login-wrap">
+<p class="kicker">ACESSO RESTRITO</p><h1>Gestão da<br><em>Zion Clothing.</em></h1>
+<p class="muted">Cadastre produtos, controle tamanhos e escolha as fotos das campanhas.</p>
+<form id="loginForm" class="card login-form"><label for="password">SENHA DO ADMINISTRADOR</label><input id="password" type="password" autocomplete="current-password" minlength="12" required placeholder="Senha do painel"><button class="solid" type="submit">Entrar no painel ↗</button></form>
+</section>
+<section id="dashboard" hidden>
 <div class="dashboard-heading"><div><p class="kicker">ZION / GESTÃO</p><h1>Seu catálogo,<br><em>suas campanhas.</em></h1></div><p class="muted">As imagens ficam no R2. Os produtos e estoques ficam no D1.</p></div>
 <nav class="tabs" aria-label="Seções do painel"><button class="active" data-tab="products" type="button">Produtos</button><button data-tab="media" type="button">Banco de imagens</button></nav>
 <section id="productsSection">
