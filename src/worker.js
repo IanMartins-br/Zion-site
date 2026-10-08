@@ -169,6 +169,11 @@ export default {
   async fetch(request,env){
     const url=new URL(request.url),path=url.pathname;
     try {
+      // Caminho curto para o painel; mantém autenticação da API separada.
+      if ((path === '/admin' || path === '/admin/') && (request.method === 'GET' || request.method === 'HEAD')) {
+        const target=new URL('/admin.html',request.url);
+        return env.ASSETS.fetch(new Request(target.toString(),request));
+      }
       if(path.startsWith('/media/')){
         if(request.method!=='GET'&&request.method!=='HEAD')return fail('Método não permitido.',405);
         if(!env.MEDIA)return fail('R2 MEDIA ainda não configurado.',503);
