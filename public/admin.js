@@ -17,7 +17,6 @@ async function api(path,options={}){
  return data;
 }
 const body=val=>({method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(val)});
-function showDashboard(visible){$('loginView').hidden=visible;$('dashboard').hidden=!visible;$('logoutButton').hidden=!visible}
 function changeTab(tab){
  $$('[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
  $('productsSection').hidden=tab!=='products';$('mediaSection').hidden=tab!=='media';
@@ -89,14 +88,6 @@ async function uploadPhotos(files,kind,slot,title){
  }
  return uploaded;
 }
-$('loginForm').addEventListener('submit',async e=>{
- e.preventDefault();const button=e.target.querySelector('button');button.disabled=true;
- try{
-  await api('/api/admin/login',body({password:$('password').value}));
-  $('password').value='';showDashboard(true);await refresh();notify('Bem-vindo ao painel da Zion.');
- }catch(err){notify(err.message,true)}finally{button.disabled=false}
-});
-$('logoutButton').addEventListener('click',async()=>{try{await api('/api/admin/logout',{method:'POST'})}catch{}showDashboard(false);resetForm();notify('Sessão encerrada.')});
 $$('[data-tab]').forEach(b=>b.addEventListener('click',()=>changeTab(b.dataset.tab)));
 $('resetProduct').addEventListener('click',resetForm);
 $('productImagePicker').addEventListener('click',e=>{
@@ -153,4 +144,4 @@ $('mediaList').addEventListener('click',async e=>{
  await refresh();notify('Banco de imagens atualizado.');
  }catch(err){notify(err.message,true)}
 });
-api('/api/admin/me').then(async()=>{showDashboard(true);await refresh()}).catch(()=>showDashboard(false));
+refresh().catch(error=>notify('Não foi possível conectar ao D1/R2: '+error.message,true));
