@@ -7,7 +7,7 @@ Esta branch é uma versão de desenvolvimento. Ainda não foi implantada em prod
 - Front-end responsivo em `public/`.
 - Vitrine alimentada pelo D1, inicialmente sem produtos fictícios.
 - Editorais do R2 com rotação de imagem a cada 3 horas na Home.
-- Painel protegido em `/admin.html`, com cadastro/edição/remoção de produtos, estoque por tamanho, fotos e visibilidade.
+- Painel protegido em `/admin`, com cadastro/edição/remoção de produtos, estoque por tamanho, fotos e visibilidade.
 - Upload de fotos (JPG/PNG/WEBP/AVIF até 8 MB por arquivo) no R2; acervo editorial separado do catálogo.
 - API no Worker em `src/worker.js`.
 - **Checkout não habilitado**. Não recebe pagamentos ou pedidos nesta fase.
@@ -16,8 +16,7 @@ Esta branch é uma versão de desenvolvimento. Ainda não foi implantada em prod
 1. O `database_id` do D1 `zion` já foi configurado em `wrangler.jsonc` (binding `DB`).
 2. Confirme o bucket R2 `zion` no mesmo ambiente Cloudflare (binding `MEDIA`).
 3. No Worker, configure **Secrets** (não publique senhas no GitHub):
-   - `ADMIN_PASSWORD`: senha forte com 12 caracteres ou mais.
-   - `SESSION_SECRET`: segredo aleatório de 32 caracteres ou mais, diferente da senha.
+   - `ADMIN_PASSWORD`: senha forte com 4 dígitos (PIN temporário).
 4. Faça a migração do D1 **em produção** (uma vez) antes de acessar o painel:
 
 ```bash
@@ -28,7 +27,7 @@ npx wrangler d1 migrations apply zion --remote
 5. Teste localmente com `npm run dev`. Em projeto Workers conectado ao GitHub, publique na branch principal após confirmar as configurações e migrações. Caso necessário: `npm run deploy`.
 6. Visite `/admin.html`, entre com a senha secreta, envie imagens de campanhas e cadastre os produtos.
 
-> **Importante:** A branch principal atualmente contém a prévia estática anterior. Não faça merge antes de configurar os secrets, aplicar as migrações e testar as rotas protegidas. A conexão do Worker no painel da Cloudflare não pode ser validada somente pelo GitHub.
+> **Importante:** A branch principal atualmente contém a prévia estática anterior. Confirme a configuração do Secret `ADMIN_PASSWORD` (PIN de 4 dígitos) no Worker e teste as rotas protegidas antes de usar o painel. O PIN de 4 dígitos oferece proteção fraca: alterar por uma senha forte antes de colocar produtos reais. A conexão do Worker no painel da Cloudflare não pode ser validada somente pelo GitHub.
 
 ## Organização das fotos
 Envie diretamente de seus arquivos para o painel, não é necessário um link público do iCloud.
@@ -37,7 +36,7 @@ Envie diretamente de seus arquivos para o painel, não é necessário um link p�
 
 ## Segurança e limites
 - Sessão por cookie HTTP-only, Secure, SameSite Strict, expira após 12 h.
-- Login limitado a seis tentativas por IP por 15 min, via D1.
+- Login temporário por PIN de 4 dígitos limitado a seis tentativas por IP por 15 min, via D1. Não é recomendado para produção comercial.
 - Mudanças administrativas requerem login e origem do próprio site.
 - SQL parametrizado; tamanho e tipo de arquivo restritos.
 - Endpoints `/api/products` e `/api/editorials` são públicos e só retornam registros visíveis.
@@ -48,3 +47,7 @@ Envie diretamente de seus arquivos para o painel, não é necessário um link p�
 - `migrations/0001_zion_catalog.sql`: tabelas D1.
 - `public/index.html`, `public/styles.css`, `public/app.js`: vitrine.
 - `public/admin.html`, `public/admin.css`, `public/admin.js`: admin.
+
+## Acesso provisório ao painel
+
+O PIN não é armazenado no repositório. Configure `ADMIN_PASSWORD` como **Secret** no painel Cloudflare Worker `zion-site`. O formulário fica em `/admin`, protegido por sessão HTTP-only e rate limiting. **Não exponha o PIN publicamente.**
