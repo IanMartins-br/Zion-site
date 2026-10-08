@@ -1,5 +1,5 @@
 
-/* ZION — protótipo de loja. Substitua os dados abaixo pelos produtos reais. */
+/* ZION CLOTHING — catálogo integrado ao D1; campanha editorial via R2. */
 const STORE = {
   name: 'ZION',
   currency: 'BRL',
@@ -65,13 +65,13 @@ function sortedProducts(list){
   const result=[...list];
   if(currentSort==='low')result.sort((a,b)=>a.price-b.price);
   if(currentSort==='high')result.sort((a,b)=>b.price-a.price);
-  if(currentSort==='newest')result.sort((a,b)=>b.id-a.id);
+  if(currentSort==='newest')result.sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||''));
   return result;
 }
 function renderProducts(){
   const filtered=sortedProducts(STORE.products.filter(p=>currentFilter==='Todos'||p.category===currentFilter));
   const visible=(showAll||currentFilter!=='Todos')?filtered:filtered.slice(0,8);
-  $('#productsGrid').innerHTML=visible.length ? visible.map(productCard).join('') : '<p class="empty-message" style="grid-column:1/-1">A coleção será apresentada em breve. Acompanhe nossas novidades.</p>';
+  $('#productsGrid').innerHTML=visible.length ? visible.map(productCard).join('') : '<div class="catalog-empty"><span class="eyebrow">ZION / EM BREVE</span><h3>O próximo drop<br><em>está chegando.</em></h3><p>Ainda estamos preparando as peças. Acompanhe <a href="https://www.instagram.com/usezion.ofc/" target="_blank" rel="noopener noreferrer">@usezion.ofc</a> para descobrir primeiro.</p></div>';
   $('#productCount').textContent=`${visible.length}${visible.length!==filtered.length?' DE '+filtered.length:''} PRODUTO${filtered.length!==1?'S':''}`;
   $('#viewAllButton').textContent=showAll?'MOSTRAR MENOS ↑':'VER TODAS AS PEÇAS ↗';
   $('#viewAllButton').hidden=currentFilter!=='Todos'||filtered.length<=8;
@@ -150,7 +150,7 @@ $('#searchInput').addEventListener('input',renderSearch);
 $('#sizeOptions').addEventListener('click',e=>{const button=e.target.closest('[data-size]');if(!button)return;selectedSize=button.dataset.size;$$('.size-option').forEach(btn=>{btn.classList.toggle('active',btn===button);btn.setAttribute('aria-pressed',String(btn===button))});$('#sizeFeedback').textContent=''});
 $('#addToCartButton').addEventListener('click',addToCart);
 $('#checkoutButton').addEventListener('click',()=>announce('A finalização de pedidos será disponibilizada em breve.'));
-$('#newsletterForm').addEventListener('submit',e=>{e.preventDefault();announce('Newsletter demonstrativa: cadastro ainda não integrado.');e.target.reset()});
+
 $('#productsGrid').addEventListener('click',e=>{const favorite=e.target.closest('[data-favorite]');if(favorite){toggleFavorite(favorite.dataset.favorite);return}const open=e.target.closest('[data-open-product]');if(open)openProduct(open.dataset.openProduct)});
 $('#searchResults').addEventListener('click',e=>{const btn=e.target.closest('[data-open-product]');if(btn)openProduct(btn.dataset.openProduct)});
 $('#favoritesResults').addEventListener('click',e=>{const btn=e.target.closest('[data-open-product]');if(btn)openProduct(btn.dataset.openProduct)});
@@ -165,7 +165,7 @@ async function loadCatalog(){
     if(!response.ok)throw new Error('Catálogo ainda não conectado.');
     const data=await response.json();
     STORE.products=(data.products||[]).map(p=>({
-      id:String(p.id),name:p.name,category:p.category,
+      id:String(p.id),name:p.name,category:p.category,createdAt:p.created_at,
       price:p.price_cents/100,tag:p.tag||'',description:p.description||'',
       sizes:(p.sizes||[]).filter(size=>(p.stock?.[size]??0)>0),
       image:p.image||null
