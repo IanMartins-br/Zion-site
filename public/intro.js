@@ -8,7 +8,7 @@
     return;
   }
 
-  const timing = {gather:2050,zReady:3120,wordmark:3550,end:4970};
+  const timing = {gather:2050,zReady:3120,wordmark:3350,end:4970};
   const timers = [], particles = [];
   let ended = false;
   const onEscape = e => { if (e.key === 'Escape') finish(); };
@@ -113,17 +113,35 @@
   timers.push(window.setTimeout(() => {if(!ended)overlay.classList.add('is-z-ready');},timing.zReady));
   timers.push(window.setTimeout(() => {
     if (ended) return;
-    // Move o Z exatamente metade da largura do sufixo: o nome completo
-    // termina centralizado, sem relayout abrupto do contêiner.
     const wordmark = overlay.querySelector('.zion-intro__wordmark');
     const suffix = overlay.querySelector('.zion-intro__ion');
-    if (wordmark && suffix) {
-      const suffixWidth = suffix.getBoundingClientRect().width;
-      if (suffixWidth > 0) {
-        wordmark.style.setProperty('--zion-ion-shift',(-suffixWidth / 2).toFixed(2)+'px');
-      }
+    if (!wordmark || !suffix) {
+      overlay.classList.add('is-wordmark');
+      return;
     }
-    overlay.classList.add('is-wordmark');
+    // Calcula a distância antes do primeiro frame. O Z permanece centralizado
+    // enquanto a próxima palavra é preparada, sem alteração do layout.
+    const width = suffix.getBoundingClientRect().width;
+    if (width > 0) {
+      wordmark.style.setProperty('--zion-ion-shift',(-width / 2).toFixed(2)+'px');
+    }
+    if (!width || typeof wordmark.animate !== 'function' ||
+        typeof suffix.animate !== 'function') {
+      overlay.classList.add('is-wordmark'); // alternativa CSS
+      return;
+    }
+
+    // Dois movimentos no mesmo relógio: o Z desliza com aceleração suave
+    // e ION é descoberto pela máscara, sem empurrar o Z ou piscar.
+    overlay.classList.add('is-smooth-wordmark','is-wordmark');
+    wordmark.animate([
+      {transform:'translate3d(0px,0,0)'},
+      {transform:'translate3d('+(-width*.5).toFixed(2)+'px,0,0)'}
+    ],{duration:980,easing:'cubic-bezier(.42,0,.17,1)',fill:'forwards'});
+    suffix.animate([
+      {clipPath:'inset(0 100% 0 0)',transform:'translate3d(-.12em,0,0)'},
+      {clipPath:'inset(0 0% 0 0)',transform:'translate3d(0,0,0)'}
+    ],{duration:860,delay:105,easing:'cubic-bezier(.35,0,.22,1)',fill:'forwards'});
   },timing.wordmark));
   timers.push(window.setTimeout(finish,timing.end));
 })();
