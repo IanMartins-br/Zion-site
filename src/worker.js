@@ -66,34 +66,9 @@ async function publicRoutes(request,env,path){
   return null;
 }
 async function adminRoutes(request,env,path){
-  if(path==='/api/admin/login' && request.method==='POST'){
-    if(!env.ADMIN_PASSWORD || !/^\\d{4}$/.test(env.ADMIN_PASSWORD))return fail('Configure ADMIN_PASSWORD com o PIN temporário de 4 dígitos no Secret do Worker.',503);
-    const identity=await sha256('zion-login-attempts-v1|'+(request.headers.get('CF-Connecting-IP')||'local'));
-    const windowStart=now()-900;
-    await env.DB.prepare('DELETE FROM login_attempts WHERE attempted_at < ?').bind(windowStart).run();
-    const attempted=await env.DB.prepare('SELECT COUNT(*) AS n FROM login_attempts WHERE ip_hash = ? AND attempted_at >= ?').bind(identity,windowStart).first();
-    if(attempted.n>=6)return fail('Muitas tentativas. Tente novamente em 15 minutos.',429);
-    const data=await parseBody(request);
-    const supplied=typeof data.password==='string'?data.password:'';
-    const actual=await sha256(env.ADMIN_PASSWORD+'|zion-login-v1');
-    const trial=await sha256(supplied+'|zion-login-v1');
-    if(actual!==trial){
-      await env.DB.prepare('INSERT INTO login_attempts (ip_hash,attempted_at) VALUES (?,?)').bind(identity,now()).run();
-      return fail('Senha incorreta.',401);
-    }
-    await env.DB.prepare('DELETE FROM login_attempts WHERE ip_hash = ?').bind(identity).run();
-    const token=Array.from(crypto.getRandomValues(new Uint8Array(32))).map(b=>b.toString(16).padStart(2,'0')).join('');
-    const hash=await sha256(token);
-    await env.DB.prepare('INSERT INTO sessions (token_hash, expires_at) VALUES (?,?)').bind(hash,now()+43200).run();
-    return json({ok:true},200,{'Set-Cookie':sessionCookie(token,43200)});
-  }
-  const verified=await session(request,env);
-  if(!verified)return fail('Acesso restrito. Faça login.',401);
-  if(path==='/api/admin/me'&&request.method==='GET')return json({authenticated:true});
-  if(path==='/api/admin/logout'&&request.method==='POST'){
-    await env.DB.prepare('DELETE FROM sessions WHERE token_hash = ?').bind(verified.token_hash).run();
-    return json({ok:true},200,{'Set-Cookie':sessionCookie('',0)});
-  }
+  // Área temporariamente aberta conforme solicitação do proprietário.
+  // AVISO: qualquer pessoa pode modificar o catálogo sem autenticação.
+  if(path==='/api/admin/me'&&request.method==='GET')return json({authenticated:false,publicEditing:true});
   if(path==='/api/admin/products'&&request.method==='GET'){
     const rows=(await env.DB.prepare('SELECT * FROM products ORDER BY created_at DESC').all()).results;
     return json({products:rows.map(publicProduct)});
