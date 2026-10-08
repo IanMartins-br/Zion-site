@@ -176,26 +176,42 @@ async function loadCatalog(){
     renderProducts();updateCounts();
   }catch(err){console.info(err.message);STORE.products=[];renderProducts();}
 }
+const localZionEditorials=[
+  {slot:'hero',url:'/assets/zion-cover-wide.webp'},
+  {slot:'feminino',url:'/assets/zion-0791.webp'},
+  {slot:'feminino',url:'/assets/zion-0770.webp'},
+  {slot:'masculino',url:'/assets/zion-0779.webp'},
+  {slot:'masculino',url:'/assets/zion-0790.webp'},
+  {slot:'campanha',url:'/assets/zion-0790.webp'},
+  {slot:'campanha',url:'/assets/zion-0799.webp'}
+];
 function cyclePhotos(images,slot,selector){
   const candidates=images.filter(p=>p.slot===slot||p.slot==='geral');
-  if(!candidates.length)return;
+  if(!candidates.length)return false;
   const cycle=Math.floor(Date.now()/(3*60*60*1000));
   const seed=Array.from(slot).reduce((n,c)=>n+c.charCodeAt(0),0);
   const selected=candidates[(cycle+seed)%candidates.length];
   const target=document.querySelector(selector);
-  if(target&&/^\/media\/editorials\/[a-f0-9-]{36}\.(jpg|png|webp|avif)$/.test(selected.url)){
+  const safeRemote=/^\/media\/editorials\/[a-f0-9-]{36}\.(jpg|png|webp|avif)$/.test(selected.url);
+  const safeLocal=/^\/assets\/zion-(0770|0779|0790|0791|0799|cover-wide)\.webp$/.test(selected.url);
+  if(target&&(safeRemote||safeLocal)){
     target.style.backgroundImage='url("'+selected.url+'")';
+    return true;
   }
+  return false;
 }
 async function loadEditorials(){
+  const sections=[
+    ['hero','.hero-bg'],['feminino','.tile-woman .tile-photo'],
+    ['masculino','.tile-man .tile-photo'],['campanha','.campaign-photo']
+  ];
+  // Mostra fotos oficiais da marca mesmo quando ainda não há nenhuma imagem no R2.
+  for(const [slot,selector] of sections)cyclePhotos(localZionEditorials,slot,selector);
   try{
     const r=await fetch('/api/editorials',{cache:'no-store'});
     if(!r.ok)return;
     const {images=[]}=await r.json();
-    cyclePhotos(images,'hero','.hero-bg');
-    cyclePhotos(images,'feminino','.tile-woman .tile-photo');
-    cyclePhotos(images,'masculino','.tile-man .tile-photo');
-    cyclePhotos(images,'campanha','.campaign-photo');
-  }catch(e){console.info('Sem editoriais cadastrados.');}
+    for(const [slot,selector] of sections)cyclePhotos(images,slot,selector);
+  }catch(e){console.info('Exibindo fotografias locais da Zion.');}
 }
 loadCatalog();loadEditorials();
