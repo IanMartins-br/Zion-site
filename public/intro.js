@@ -8,7 +8,7 @@
     return;
   }
 
-  const timing = {gather:2050,zReady:3120,wordmark:3350,end:4970};
+  const timing = {gather:1400,zReady:2470,wordmark:2700,end:4300};
   const timers = [], particles = [];
   let ended = false;
   const onEscape = e => { if (e.key === 'Escape') finish(); };
