@@ -111,6 +111,19 @@
   // Troca a silhueta construída pelas letras pelo Z tipográfico no mesmo
   // instante; não diminui a opacidade das partículas para escondê-las.
   timers.push(window.setTimeout(() => {if(!ended)overlay.classList.add('is-z-ready');},timing.zReady));
-  timers.push(window.setTimeout(() => {if(!ended)overlay.classList.add('is-wordmark');},timing.wordmark));
+  timers.push(window.setTimeout(() => {
+    if (ended) return;
+    // Move o Z exatamente metade da largura do sufixo: o nome completo
+    // termina centralizado, sem relayout abrupto do contêiner.
+    const wordmark = overlay.querySelector('.zion-intro__wordmark');
+    const suffix = overlay.querySelector('.zion-intro__ion');
+    if (wordmark && suffix) {
+      const suffixWidth = suffix.getBoundingClientRect().width;
+      if (suffixWidth > 0) {
+        wordmark.style.setProperty('--zion-ion-shift',(-suffixWidth / 2).toFixed(2)+'px');
+      }
+    }
+    overlay.classList.add('is-wordmark');
+  },timing.wordmark));
   timers.push(window.setTimeout(finish,timing.end));
 })();
