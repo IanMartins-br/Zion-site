@@ -170,3 +170,43 @@ Não armazena número de cartão, CVV ou dados de autenticação da InfinitePay.
 Os pedidos pagos com estoque insuficiente ou editado após a criação são marcados
 como `paid_review` para conferência manual; ainda é necessário validar o fluxo
 com concorrência e pagamentos tardios antes de vender em grande escala.
+
+## Administração por e-mail com Cloudflare Access — preparada, ainda não ativada
+
+O e-mail exclusivo autorizado é `ianlucas.fm@icloud.com`, declarado também em
+`wrangler.jsonc` como `ADMIN_ALLOWED_EMAIL`. O Worker mantém o painel protegido
+pelo PIN atual **até a configuração do Cloudflare Access ser concluída**.
+Apenas adicionar o e-mail ao GitHub não cria uma política Cloudflare.
+
+### Ativar acesso sem PIN da Zion (sem fechar a loja)
+
+1. No painel Cloudflare, abra **Zero Trust > Access controls > Applications > Add application**
+   e crie uma aplicação **Self-hosted** apenas para:
+   - `zion-site.ianlucas-fm.workers.dev/admin` (incluir também `/admin/`, `/admin.html`).
+   - `zion-site.ianlucas-fm.workers.dev/api/admin/*`.
+   Use uma única aplicação Access, com os caminhos necessários, para manter o
+   mesmo **Application Audience (AUD)**. A loja pública e o checkout NÃO
+   devem estar protegidos pela aplicação Access.
+2. Adicione política **Allow > Emails > ianlucas.fm@icloud.com**.
+   Não use Include > Everyone ou Include > Login Methods sem restringir e-mail.
+3. Habilite **One-time PIN** como método de autenticação: um código
+   temporário é enviado por e-mail; não será necessário o PIN próprio do site.
+4. Copie o domínio da equipe (por exemplo,
+   `https://seutime.cloudflareaccess.com`) e o **Application Audience (AUD) Tag**.
+   Configure no Worker `zion-site` estas variáveis:
+   - `ADMIN_ACCESS_TEAM_DOMAIN`: endereço HTTPS da equipe Cloudflare Access.
+   - `ADMIN_ACCESS_AUD`: AUD da aplicação Cloudflare Access.
+   - `ADMIN_ALLOWED_EMAIL`: `ianlucas.fm@icloud.com` (já no wrangler.jsonc).
+5. **Somente quando as duas variáveis Access estiverem completas**, o Worker
+   aceitará o JWT RS256 **assinado** pela Cloudflare, conferindo
+   `iss`, `aud`, `exp`, `nbf` e e-mail autorizado.
+   O login por PIN será desativado automaticamente.
+6. Acesse `/admin` em janela privativa e confirme que outro e-mail não
+   consegue entrar e que `/api/admin/orders` responde 401 sem autenticação.
+   Teste também os cadastros, estoque e pedidos antes de remover o Secret
+   `ADMIN_PASSWORD`.
+
+**Não remover o PIN enquanto o Cloudflare Access não estiver ativo**.
+Desativar o PIN no GitHub sem criar a política e a verificação do token deixaria
+pedidos, contatos e produtos expostos. No modo Access, o botão Sair direciona
+para o logout da Cloudflare.
