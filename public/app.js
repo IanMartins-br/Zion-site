@@ -196,7 +196,7 @@ $('#sizeOptions').addEventListener('click',e=>{const button=e.target.closest('[d
 $('#modalMinus').addEventListener('click',()=>{selectedQuantity=Math.max(1,selectedQuantity-1);updateQuickPurchase()});
 $('#modalPlus').addEventListener('click',()=>{if(selectedSize&&selectedQuantity<remainingStock(selectedProduct,selectedSize))selectedQuantity+=1;updateQuickPurchase()});
 $('#addToCartButton').addEventListener('click',addToCart);
-$('#checkoutButton').addEventListener('click',()=>announce('A finalização de pedidos será disponibilizada em breve.'));
+$('#checkoutButton').addEventListener('click',()=>window.location.assign('/checkout/'));
 
 $('#productsGrid').addEventListener('click',e=>{const bag=e.target.closest('[data-quick-bag]');if(bag){openProduct(bag.dataset.quickBag);return}const favorite=e.target.closest('[data-favorite]');if(favorite){toggleFavorite(favorite.dataset.favorite);return}const open=e.target.closest('[data-open-product]');if(open)openProduct(open.dataset.openProduct)});
 $('#searchResults').addEventListener('click',e=>{const btn=e.target.closest('[data-open-product]');if(btn)openProduct(btn.dataset.openProduct)});
