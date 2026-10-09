@@ -12,7 +12,7 @@ const $$ = (selector, root=document) => [...root.querySelectorAll(selector)];
 const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 const money = value => new Intl.NumberFormat('pt-BR',{style:'currency',currency:STORE.currency}).format(value);
 const catalogTitle = name => String(name ?? '').replace(/^Camiseta\s+Oversized\s+Heavy\s*[-–—]\s*/i,'').replace(/\s*[-–—]\s*240\s*g\s*$/i,'').trim();
-const imageUrl = (id, width=700) => !id ? '/placeholder.svg' : /^\/assets\/zion-(0770|0779|0790|0791|0799|cover-wide|go-into-all-world-capa|go-into-world-capa-v2|go-into-world-(786|787|788|789|790)|oba-(capa|77[4-8]))\.webp$/.test(id) ? id : id.startsWith('/media/') ? id : id.startsWith('https://') ? id : `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${width}&q=82`;
+const imageUrl = (id, width=700) => !id ? '/placeholder.svg' : /^\/assets\/zion-(0770|0779|0790|0791|0799|cover-wide|go-into-all-world-capa|go-into-world-capa-v2|go-into-world-capa-v3|go-into-world-(786|787|788|789|790)|oba-(capa|capa-v3|77[4-8]))\.webp$/.test(id) ? id : id.startsWith('/media/') ? id : id.startsWith('https://') ? id : `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${width}&q=82`;
 const safeRead = (key,fallback) => {try{return JSON.parse(localStorage.getItem(key))??fallback}catch{return fallback}};
 const safeSave = (key,value) => {try{localStorage.setItem(key,JSON.stringify(value))}catch{}};
 let cart = safeRead('zion-cart',[]);
