@@ -207,3 +207,195 @@ body.zion-intro-lock{overflow:hidden}
 }
 @media(hover:none),(pointer:coarse){.product-card .product-hover-image{display:none}}
 @media(prefers-reduced-motion:reduce){.product-card .product-photo-trigger img{transition:none!important}}
+
+/* ZION / CARD DE CATÁLOGO V5 — camiseta inteira, troca de foto dentro do card. */
+.product-card{min-width:0;isolation:isolate}
+.product-card .product-image-wrap{
+  aspect-ratio:4/4.9;
+  border-radius:10px;
+  background:#f0f0ed;
+  overflow:hidden;
+  cursor:default;
+}
+.product-card .product-photo-trigger{inset:0;position:absolute;display:block;overflow:hidden;border-radius:inherit}
+.product-card .product-photo-trigger .product-main-image{
+  box-sizing:border-box;
+  position:absolute;
+  inset:0;
+  display:block;
+  width:100%;
+  height:100%;
+  padding:12px;
+  object-fit:contain;
+  object-position:center;
+  background:transparent;
+  opacity:1!important;
+  transform:none!important;
+  transition:none!important;
+}
+.product-card .product-photo-trigger .product-hover-image{
+  box-sizing:border-box;
+  position:absolute;
+  inset:0;
+  display:block;
+  width:100%;
+  height:100%;
+  padding:0;
+  object-fit:cover;
+  object-position:center;
+  opacity:0;
+  transform:none!important;
+  transition:opacity .68s cubic-bezier(.22,.58,.28,1);
+  will-change:opacity;
+}
+@media(hover:hover) and (pointer:fine){
+  .product-card.has-preview .product-image-wrap:hover .product-hover-image,
+  .product-card.has-preview .product-photo-trigger:focus-visible .product-hover-image{opacity:1}
+}
+.product-card .product-flag{
+  top:14px;left:13px;
+  z-index:3;
+  font-size:9px;
+  letter-spacing:.08em;
+  pointer-events:none;
+}
+.product-card .quick-add{display:none!important}
+.product-card .quick-bag{
+  position:absolute;
+  z-index:5;
+  bottom:16px;
+  right:15px;
+  width:43px;
+  height:43px;
+  border:0;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:#212721;
+  color:white;
+  box-shadow:0 4px 13px rgba(22,26,21,.15);
+  transition:background .2s ease,transform .2s ease,box-shadow .2s ease;
+}
+.product-card .quick-bag svg{width:19px;height:19px}
+.product-card .quick-bag:hover{background:#405747;transform:translateY(-2px);box-shadow:0 7px 17px rgba(22,26,21,.18)}
+.product-card .quick-bag:focus-visible{outline:3px solid #66886d;outline-offset:3px}
+.product-card .product-image-wrap .wishlist{z-index:5;right:13px;top:13px}
+.product-card .product-meta{margin-top:14px;display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.product-card .product-category{display:none!important}
+.product-card .product-title{font-weight:600;margin:0;font-size:12px;line-height:1.5}
+.product-card .product-title a{text-decoration:none}
+.product-card .product-title a:hover{text-decoration:underline}
+.product-card .product-price{font-size:12px;line-height:1.5}
+@media(max-width:700px){
+  .product-card .product-image-wrap{aspect-ratio:4/5.15;border-radius:8px}
+  .product-card .product-photo-trigger .product-main-image{padding:7px}
+  .product-card .product-meta{display:flex;gap:5px;align-items:flex-start;flex-direction:column}
+  .product-card .product-price{margin:5px 0 0}
+  .product-card .quick-bag{width:38px;height:38px;bottom:12px;right:10px}
+  .product-card .quick-bag svg{width:18px;height:18px}
+}
+@media(hover:none),(pointer:coarse){.product-card .product-hover-image{display:none!important}}
+@media(prefers-reduced-motion:reduce){
+ .product-card .product-hover-image,.product-card .quick-bag{transition:none!important}
+}
+
+/* Popup de compra rápida inspirado na clareza da Romã, com identidade Zion. */
+.quick-purchase-modal{
+  width:min(calc(100% - 34px),890px);
+  min-height:450px;
+  max-height:min(90dvh,680px);
+  grid-template-columns:1fr 1fr;
+  background:#fff;
+  border-radius:18px;
+  box-shadow:0 25px 90px rgba(0,0,0,.15);
+  overflow-y:auto;
+  overscroll-behavior:contain;
+}
+.quick-purchase-modal .modal-photo{
+  min-height:450px;
+  height:auto;
+  padding:38px 18px;
+  background:#fbfbfa;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.quick-purchase-modal .modal-photo img{
+  width:100%;height:auto;max-height:390px;object-fit:contain;
+}
+.quick-purchase-modal .modal-information{
+  padding:74px 50px 45px 42px;
+  display:flex;
+  align-items:stretch;
+  flex-direction:column;
+  justify-content:center;
+}
+.quick-purchase-modal .modal-information h2{
+  font:700 clamp(27px,3.2vw,39px)/1.14 var(--sans);
+  letter-spacing:-.035em;
+  margin:18px 0 12px;
+}
+.quick-purchase-modal .modal-price{font-size:19px;font-weight:700;margin:0 0 37px}
+.quick-purchase-modal .modal-close{
+  position:absolute;top:13px;right:16px;z-index:3;
+  width:42px;height:42px;
+  border-radius:50%;background:rgba(255,255,255,.92);
+}
+.quick-purchase-modal .size-heading{color:#40483f;font-size:10px}
+.quick-purchase-modal .size-options{margin:14px 0 12px;display:flex;gap:9px;flex-wrap:wrap}
+.quick-purchase-modal .size-option{
+  min-width:48px;min-height:42px;padding:10px;border:1px solid #b7bbb5;
+  border-radius:3px;font-size:12px;font-weight:600;
+  background:white;color:var(--ink);
+  transition:background .2s,color .2s,border-color .2s
+}
+.quick-purchase-modal .size-option.active{background:#1d2921;border-color:#1d2921;color:white}
+.quick-purchase-modal .size-option:disabled{opacity:.42;text-decoration:line-through;cursor:not-allowed}
+.quick-purchase-modal .size-feedback{
+  margin:0 0 21px;min-height:18px;line-height:1.5;
+  font-size:11px;color:#8d584e;letter-spacing:0;
+}
+.quick-purchase-modal .quick-purchase-controls{
+  display:grid;grid-template-columns:110px minmax(0,1fr);
+  gap:10px;min-height:49px;
+}
+.quick-purchase-modal .quick-quantity{
+  border:1px solid #ced2cd;display:flex;justify-content:space-between;align-items:center;
+}
+.quick-purchase-modal .quick-quantity button{
+  width:34px;height:100%;border:0;background:transparent;font-size:18px;
+  color:#263228;
+}
+.quick-purchase-modal .quick-quantity button:disabled{opacity:.28;cursor:not-allowed}
+.quick-purchase-modal .quick-quantity output{font-size:12px;min-width:15px;text-align:center}
+.quick-purchase-modal #addToCartButton{
+  width:100%;min-width:0;min-height:49px;display:flex;align-items:center;justify-content:center;
+  background:#1d2921;color:white;border:1px solid #1d2921;
+  padding:12px 15px;
+  font-size:11px;font-weight:650;letter-spacing:.05em;cursor:pointer;
+}
+.quick-purchase-modal #addToCartButton:disabled{background:#a7ada6;border-color:#a7ada6;color:white;opacity:1;cursor:not-allowed}
+.quick-purchase-modal .modal-detail-link{
+  align-self:flex-start;
+  font-size:11px;
+  text-decoration:underline;
+  text-underline-offset:4px;
+  margin-top:25px;
+  font-weight:650;
+}
+.quick-purchase-modal .modal-footnote{font-size:10px;margin:20px 0 0;line-height:1.55}
+@media(max-width:700px){
+  .quick-purchase-modal{
+    top:50%;left:50%;width:min(calc(100% - 22px),520px);
+    height:auto;max-height:94dvh;
+    transform:translate(-50%,-44%);border-radius:14px;
+    grid-template-columns:1fr;
+  }
+  .quick-purchase-modal.open{transform:translate(-50%,-50%)}
+  .quick-purchase-modal .modal-photo{height:210px;min-height:0;padding:20px 36px 5px}
+  .quick-purchase-modal .modal-photo img{max-height:200px}
+  .quick-purchase-modal .modal-information{padding:20px 23px 28px}
+  .quick-purchase-modal .modal-information h2{font-size:25px;margin:10px 0}
+  .quick-purchase-modal .modal-price{font-size:17px;margin:0 0 21px}
+  .quick-purchase-modal .modal-close{top:8px;right:9px}
+}
