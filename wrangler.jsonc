@@ -27,6 +27,8 @@
   ],
   "vars": {
     "INFINITEPAY_HANDLE": "zion-clothing",
-    "ADMIN_ALLOWED_EMAIL": "ianlucas.fm@icloud.com"
+    "ADMIN_ALLOWED_EMAIL": "ianlucas.fm@icloud.com",
+    "ADMIN_ACCESS_TEAM_DOMAIN": "https://patient-thunder-76be.cloudflareaccess.com",
+    "ADMIN_ACCESS_AUD": "3cba86e1d617b97da6b31649e0be128be7fb2595fd84178f6e2b628b4f1f5470"
   }
 }
