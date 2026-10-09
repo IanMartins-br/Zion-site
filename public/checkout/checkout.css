@@ -1,0 +1,40 @@
+:root{--ink:#202921;--paper:#f5f4ef;--line:#dde1da;--muted:#697268;--green:#223c2a;--sans:'DM Sans',Arial,sans-serif;--display:'Barlow Condensed','Arial Narrow',sans-serif}
+*{box-sizing:border-box}body{margin:0;color:var(--ink);background:var(--paper);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+a{color:inherit}button,input,select{font:inherit}button{cursor:pointer}[hidden]{display:none!important}
+.announcement{background:var(--green);text-align:center;color:#fff;font-size:10px;letter-spacing:.17em;padding:12px}
+header{background:#fdfefa;border-bottom:1px solid var(--line);display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:23px clamp(20px,5vw,76px)}
+.brand{font:800 49px/.85 var(--display);letter-spacing:-.025em;text-decoration:none}.brand small{font:650 8px/1 var(--sans);display:block;letter-spacing:.25em;text-align:center;margin-top:8px}
+.back{font-size:10px;font-weight:700;letter-spacing:.09em;text-decoration:none}.help{justify-self:end;color:var(--muted);font-size:10px;letter-spacing:.12em}
+main{max-width:1250px;margin:auto;padding:48px clamp(20px,4vw,58px) 120px}h1{font:650 clamp(44px,6vw,76px)/.93 var(--display);letter-spacing:-.02em;margin:14px 0 34px}
+.overline{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.2em}
+.checkout-grid{display:grid;grid-template-columns:minmax(0,1.32fr) minmax(300px,.79fr);align-items:start;gap:clamp(32px,6vw,90px)}
+h2{font:650 22px/1.15 var(--display);margin:28px 0 17px;text-transform:uppercase;letter-spacing:.025em}
+.fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+label{display:flex;flex-direction:column;gap:7px;font-size:10px;font-weight:650;letter-spacing:.06em}
+label.full{grid-column:1/-1}
+input{width:100%;min-width:0;padding:14px;background:#fff;border:1px solid #cfd5cb;border-radius:3px;font-size:13px;letter-spacing:0;outline-offset:2px}
+input:focus{border-color:var(--green);outline:1px solid var(--green)}
+.order-box{position:sticky;top:20px;background:white;border:1px solid var(--line);border-radius:8px;padding:30px 27px}
+.order-box h2{margin:0 0 22px}
+.line{display:grid;grid-template-columns:54px 1fr auto;gap:12px;align-items:center;margin-bottom:17px;font-size:12px}
+.line img{width:54px;height:66px;object-fit:cover;background:#f1f1ed;border-radius:4px}
+.line strong{display:block;font-size:12px;line-height:1.35}.line small{display:block;margin-top:5px;color:var(--muted)}
+.line-price{white-space:nowrap;font-weight:700}
+.totals{border-top:1px solid var(--line);margin-top:22px;padding-top:18px;display:flex;flex-direction:column;gap:13px;font-size:12px}
+.totals div{display:flex;justify-content:space-between;gap:20px}
+.totals .total{border-top:1px solid var(--line);padding-top:17px;font-size:16px;font-weight:750}
+.pay{margin-top:23px;width:100%;padding:18px 20px;border:0;background:var(--green);color:white;border-radius:4px;letter-spacing:.08em;font-weight:750;font-size:11px}
+.pay:disabled{background:#a4aaa3;cursor:not-allowed}
+.note,.status{font-size:12px;line-height:1.65;color:var(--muted);margin:13px 0 0}
+.status{font-weight:600;color:#6d4c30}
+.status.error{color:#a03b35}
+.secure{font-size:10px;color:var(--muted);line-height:1.5;margin-top:18px}
+footer{border-top:1px solid var(--line);padding:25px 4%;display:flex;justify-content:space-between;gap:15px;color:var(--muted);font-size:10px;letter-spacing:.06em}
+.result{max-width:720px;margin:auto;text-align:center;padding:55px 12px 70px}
+.result h1{line-height:1.1}
+.result a{display:inline-block;margin-top:26px;background:var(--green);color:#fff;padding:16px 27px;text-decoration:none;letter-spacing:.1em;font-weight:700;font-size:11px}
+.result .detail{margin:18px 0;font-size:13px;line-height:1.75;color:var(--muted)}
+.result button{border:1px solid var(--line);background:transparent;padding:12px 18px;font-size:11px}
+@media(max-width:800px){header{padding:20px;grid-template-columns:1fr auto 1fr}.brand{font-size:41px}.help{display:none}
+main{padding:30px 19px 80px}.checkout-grid{grid-template-columns:1fr;gap:32px}.order-box{position:static;padding:22px}.fields{gap:12px}.line{grid-template-columns:44px 1fr auto}.line img{width:44px;height:54px}footer{display:block;text-align:center;line-height:2}}
+@media(max-width:440px){.fields{grid-template-columns:1fr}.back{font-size:9px}.brand{font-size:37px}main h1{font-size:52px}}

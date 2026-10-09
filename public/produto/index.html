@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/produto/product.css?v=4">
-<script defer src="/produto/product.js?v=5"></script>
+<script defer src="/produto/product.js?v=6"></script>
 </head>
 <body>
 <div class="announcement"><span>ESTILO. IDENTIDADE. PROPÓSITO.</span><span>ENVIO PARA TODO O BRASIL</span></div>
@@ -48,13 +48,13 @@
    <p id="stockFeedback" class="hint" aria-live="polite"></p>
    <div class="quantity"><span>QUANTIDADE</span><div class="qty-widget"><button type="button" id="qtyLess" aria-label="Diminuir quantidade">−</button><output id="qtyValue">1</output><button type="button" id="qtyMore" aria-label="Aumentar quantidade">+</button></div></div>
    <button id="buyButton" class="buy" type="button" disabled>SELECIONE UM TAMANHO <span>↗</span></button>
-   <p class="checkout-hint">A sacola está em preparação. O pagamento online ainda não está habilitado.</p>
+   <p class="checkout-hint">Após escolher o tamanho, informe seus dados e siga para o pagamento seguro da InfinitePay. A cobrança só estará disponível quando a conta e o frete forem configurados.</p>
    <section class="shipping" aria-label="Simular frete">
     <h2>CONSULTAR FRETE <span>↗</span></h2>
     <p>Digite seu CEP para uma estimativa ilustrativa de entrega expressa com o SEDEX como referência.</p>
     <form id="shippingForm"><label class="sr-only" for="zipCode">CEP de destino</label><input id="zipCode" inputmode="numeric" autocomplete="postal-code" maxlength="9" placeholder="00000-000" required><button type="submit">SIMULAR</button></form>
     <div id="shippingResult" class="shipping-result" role="status" aria-live="polite"></div>
-    <small>Simulação informativa, não é cotação oficial dos Correios. Valores e prazos definitivos dependem da origem, embalagem, serviço disponível e integração com os Correios.</small>
+    <small>A estimativa acima é ilustrativa e não será cobrada. O valor efetivo da entrega aparece antes do pagamento na etapa de checkout.</small>
    </section>
    <p class="nationwide">ENVIO PARA TODO O BRASIL</p>
   </div>

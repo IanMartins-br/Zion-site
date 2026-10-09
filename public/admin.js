@@ -20,7 +20,8 @@ const body=val=>({method:'POST',headers:{'Content-Type':'application/json'},body
 function showDashboard(visible){$('loginView').hidden=visible;$('dashboard').hidden=!visible;$('logoutButton').hidden=!visible}
 function changeTab(tab){
  $$('[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
- $('productsSection').hidden=tab!=='products';$('mediaSection').hidden=tab!=='media';
+ $('productsSection').hidden=tab!=='products';$('mediaSection').hidden=tab!=='media';$('ordersSection').hidden=tab!=='orders';
+ if(tab==='orders')refreshOrders();
 }
 async function refresh(){
  const [products,media]=await Promise.all([api('/api/admin/products'),api('/api/admin/media')]);
@@ -28,6 +29,23 @@ async function refresh(){
  renderProducts();renderMedia();renderPicker();
 }
 function imgsrc(key){return (/^\/assets\/zion-(0790|go-into-all-world-capa|go-into-world-capa-v2|go-into-world-capa-v3|oba-capa|oba-capa-v3)\.webp$/.test(key))?key:/^\/(media)\/(products|editorials)\/[a-f0-9-]{36}\.(jpg|png|webp|avif)$/.test(key)?key:'/placeholder.svg'}
+const orderStateText=status=>({paid:'PAGAMENTO CONFIRMADO',paid_review:'PAGO / CONFERIR ESTOQUE',pending:'AGUARDANDO PAGAMENTO',confirming:'CONFIRMANDO',link_error:'ERRO AO GERAR LINK'}[status]||String(status).toUpperCase());
+async function refreshOrders(){
+ $('ordersList').textContent='Carregando pedidos…';
+ try{
+  const data=await api('/api/admin/orders');
+  const orders=Array.isArray(data.orders)?data.orders:[];
+  $('ordersList').innerHTML=orders.length?orders.map(o=>{
+   const a=o.address||{},c=o.customer||{},items=Array.isArray(o.items)?o.items:[];
+   const products=items.map(i=>'<li>'+esc(i.name)+' · '+esc(i.size)+' · '+Number(i.quantity||0)+'× '+currency(i.price_cents)+'</li>').join('');
+   const address=[a.street,a.number,a.complement,a.neighborhood,a.city,a.state,a.cep].filter(Boolean).map(esc).join(' · ');
+   return '<details class="order-entry"><summary><strong>'+esc(o.order_nsu.slice(0,8).toUpperCase())+'</strong><span>'+esc(orderStateText(o.status))+'</span><span>'+currency(o.amount_cents)+'</span><small>'+esc(o.created_at?.slice(0,16).replace('T',' ')||'')+'</small></summary>'+
+    '<div class="order-body"><p><b>Cliente:</b> '+esc(c.name)+' · '+esc(c.email)+' · '+esc(c.phone_number)+'</p>'+
+    '<p><b>Entrega:</b> '+address+'</p><p><b>Frete incluído:</b> '+currency(o.shipping_cents)+'</p>'+
+    '<p><b>Itens:</b></p><ul>'+products+'</ul></div></details>';
+  }).join(''):'<p class="muted">Ainda não há pedidos. Eles aparecerão quando o checkout for utilizado.</p>';
+ }catch(err){$('ordersList').textContent=err.message||'Falha ao buscar pedidos.';notify(err.message,true)}
+}
 function renderProducts(){
  $('productTotal').textContent=state.products.length+' cadastrados';
  $('productList').innerHTML=state.products.length?state.products.map(p=>`
@@ -97,7 +115,8 @@ $('loginForm').addEventListener('submit',async e=>{
  }catch(err){notify(err.message,true)}finally{button.disabled=false}
 });
 $('logoutButton').addEventListener('click',async()=>{try{await api('/api/admin/logout',{method:'POST'})}catch{}showDashboard(false);resetForm();notify('Sessão encerrada.')});
-$$('[data-tab]').forEach(b=>b.addEventListener('click',()=>changeTab(b.dataset.tab)));
+$('[data-tab]').forEach(b=>b.addEventListener('click',()=>changeTab(b.dataset.tab)));
+$('refreshOrders').addEventListener('click',refreshOrders);
 $('resetProduct').addEventListener('click',resetForm);
 $('productImagePicker').addEventListener('click',e=>{
  const button=e.target.closest('[data-select]');if(!button)return;

@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Finalize seu pedido da Zion Clothing pela InfinitePay, com Pix ou cartão.">
+<title>Finalizar pedido | Zion Clothing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/checkout/checkout.css?v=1"><script defer src="/checkout/checkout.js?v=1"></script></head>
+<body><div class="announcement">ZION CLOTHING / PAGAMENTO SEGURO VIA INFINITEPAY</div>
+<header><a class="back" href="/#catalogo">← VOLTAR À LOJA</a><a class="brand" href="/">ZION.<small>CLOTHING</small></a><span class="help">COMPRA SEGURA</span></header>
+<main><span class="overline">SUA COMPRA / 01</span><h1>FINALIZAR PEDIDO</h1>
+<div class="checkout-grid"><section aria-label="Dados para entrega">
+<form id="checkoutForm" autocomplete="on">
+<h2>Seus dados</h2><div class="fields">
+<label class="full">NOME COMPLETO<input name="name" autocomplete="name" required minlength="3" maxlength="120"></label>
+<label>E-MAIL<input name="email" type="email" autocomplete="email" required maxlength="150"></label>
+<label>TELEFONE COM DDD<input name="phone_number" type="tel" autocomplete="tel" inputmode="tel" placeholder="(31) 99999-9999" required></label>
+</div>
+<h2>Endereço de entrega</h2><div class="fields">
+<label>CEP<input name="cep" autocomplete="postal-code" inputmode="numeric" required pattern="[0-9]{5}-?[0-9]{3}" maxlength="9" placeholder="00000-000"></label>
+<label>ESTADO (UF)<input name="state" maxlength="2" autocomplete="address-level1" required placeholder="MG"></label>
+<label class="full">RUA / AVENIDA<input name="street" autocomplete="address-line1" required minlength="3"></label>
+<label>NÚMERO<input name="number" required maxlength="20"></label>
+<label>COMPLEMENTO<input name="complement" autocomplete="address-line2"></label>
+<label>BAIRRO<input name="neighborhood" required minlength="2"></label>
+<label>CIDADE<input name="city" autocomplete="address-level2" required minlength="2"></label>
+</div><p class="note">Os dados de entrega são utilizados para preparar o envio. O pagamento é feito no ambiente seguro da InfinitePay.</p>
+</form></section>
+<aside class="order-box"><h2>RESUMO DO PEDIDO</h2><div id="orderLines" aria-live="polite">Carregando sacola…</div>
+<div class="totals"><div><span>Subtotal</span><strong id="subtotal">—</strong></div>
+<div><span>Entrega</span><strong id="shipping">A calcular</strong></div>
+<div class="total"><span>Total</span><strong id="total">—</strong></div></div>
+<button form="checkoutForm" id="payButton" type="submit" class="pay" disabled>CONTINUAR PARA A INFINITEPAY ↗</button>
+<p id="checkoutStatus" class="status" role="status" aria-live="polite">Verificando configuração do checkout…</p>
+<p class="secure">O pagamento pode ser realizado por Pix ou cartão de crédito na InfinitePay. A venda não é concluída até a confirmação do pagamento.</p></aside></div>
+</main><footer><span>ZION CLOTHING © 2026</span><span>STREETWEAR COM PROPÓSITO</span></footer></body></html>

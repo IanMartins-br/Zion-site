@@ -67,7 +67,7 @@
     $('#qtyMore').disabled=!selectedSize || quantity>=available;
     const buy=$('#buyButton');
     buy.disabled=available===0;
-    buy.innerHTML=available>0?'ADICIONAR À SACOLA <span>↗</span>':'SELECIONE UM TAMANHO <span>↗</span>';
+    buy.innerHTML=available>0?'COMPRAR AGORA <span>↗</span>':'SELECIONE UM TAMANHO <span>↗</span>';
     $('#stockFeedback').textContent=available>0
       ? available===1?'Última unidade disponível neste tamanho.':'Disponível: '+available+' unidade(s).'
       :selectedSize?'Este tamanho está esgotado.':'Escolha um tamanho disponível.';
@@ -147,7 +147,7 @@
     else current.push({id:String(item.id),size:selectedSize,qty:quantity});
     try{
       localStorage.setItem('zion-cart',JSON.stringify(current));
-      $('#stockFeedback').textContent='Adicionado à sacola. O checkout da loja ainda não está disponível.';
+      window.location.assign('/checkout/');
     }catch{
       $('#stockFeedback').textContent='Não foi possível salvar a sacola neste navegador.';
     }

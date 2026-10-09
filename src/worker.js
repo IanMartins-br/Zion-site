@@ -1,3 +1,4 @@
+import {checkoutRoutes,adminCheckoutOrders} from './checkout.js';
 const json = (value,status=200,headers={}) => new Response(JSON.stringify(value),{status,headers:{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff',...headers}});
 const fail = (message,status=400) => json({error:message},status);
 const asText = (v,max=200) => String(v ?? '').trim().slice(0,max);
@@ -188,6 +189,7 @@ async function adminRoutes(request,env,path){
     await env.DB.prepare('DELETE FROM sessions WHERE token_hash = ?').bind(verified.token_hash).run();
     return json({ok:true},200,{'Set-Cookie':sessionCookie('',0)});
   }
+  if(path==='/api/admin/orders'&&request.method==='GET')return await adminCheckoutOrders(env);
   if(path==='/api/admin/products'&&request.method==='GET'){
     await ensureFirstProduct(env);
     await ensureFirstProductSizes(env);
@@ -281,9 +283,15 @@ export default {
         const headers=new Headers({'Cache-Control':'public, max-age=86400','X-Content-Type-Options':'nosniff','Content-Type':obj.httpMetadata?.contentType||'application/octet-stream'});
         return new Response(request.method==='HEAD'?null:obj.body,{headers});
       }
+      if(path==='/api/checkout/webhook'){
+        if(request.method!=='POST')return fail('Método não permitido.',405);
+        if(!env.DB)return fail('D1 DB ainda não configurado.',503);
+        return await checkoutRoutes(request,env,path);
+      }
       if(path.startsWith('/api/')){
         if(!requireSameOrigin(request))return fail('Origem não autorizada.',403);
         if(!env.DB)return fail('D1 DB ainda não configurado.',503);
+        if(path.startsWith('/api/checkout/'))return await checkoutRoutes(request,env,path);
         if(path.startsWith('/api/admin/'))return await adminRoutes(request,env,path);
         const response=await publicRoutes(request,env,path);
         return response||fail('Rota não encontrada.',404);
