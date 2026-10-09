@@ -45,17 +45,45 @@ function cleanProduct(input){
   if(keys.some(key=>typeof key!=='string'||!validKey(key)||!key.startsWith('products/')))throw new Error('Imagem de produto inválida.');
   return {name,category,description:asText(input.description,2000),price,tag:asText(input.tag,35),sizes,stock,keys,active:input.active===false?0:1};
 }
-const publicProduct=row=>({
-  id:row.id,name:row.name,category:row.category,description:row.description,
-  price_cents:row.price_cents,tag:row.tag,sizes:pickJSON(row.sizes_json,[]),
-  stock:pickJSON(row.stock_json,{}),imageKeys:pickJSON(row.images_json,[]),
-  image:(pickJSON(row.images_json,[])[0] ? '/media/'+pickJSON(row.images_json,[])[0]:null),
-  images:pickJSON(row.images_json,[]).map(key=>'/media/'+key),
-  active:!!row.active,created_at:row.created_at,updated_at:row.updated_at
-});
+// Cadastro inicial sem dados inventados de tamanhos/estoque.
+const FIRST_PRODUCT_ID='a6bd8e32-83cf-4aa3-9f6b-6d2d10e052c5';
+const FIRST_PRODUCT_IMAGE='/assets/zion-0790.webp';
+const FIRST_PRODUCT_DESCRIPTION = ["“Portanto, vão e façam discípulos de todas as nações, batizando-os em nome do Pai, do Filho e do Espírito Santo”.","(Mateus 28:19)","","Esse é o chamado de Jesus para que o amor, a fé e a salvação ultrapassem fronteiras, alcançando todas as nações. Essa peça representa a esperança do evangelho.","","Confeccionada no Modelo Premium, com 100% algodão penteado 30.1, toque macio e estampa DTF duradoura. O caimento Oversized proporciona um visual moderno e autêntico.","","Diferenciais:","• Modelo Heavy — gramatura 240g: tecido encorpado e confortável","• Tecnologia DTF — não desbota na lavagem","• Modelagem Oversized — estilo e conforto","• 100% algodão penteado 30.1","• Reforço ombro a ombro — maior durabilidade","","ENVIO PARA TODO O BRASIL"].join('\n');
+async function ensureFirstProduct(env) {
+  // Marcador evita que um produto excluído no admin seja recriado.
+  const marker='first-go-into-world-v1';
+  let applied=null;
+  try {
+    applied=await env.DB.prepare('SELECT id FROM catalog_bootstrap WHERE id = ?').bind(marker).first();
+  }catch(error){
+    if(!/no such table/i.test(String(error)))throw error;
+    await env.DB.prepare('CREATE TABLE IF NOT EXISTS catalog_bootstrap (id TEXT PRIMARY KEY, applied_at TEXT NOT NULL)').run();
+  }
+  if(applied)return;
+  const stamp=new Date().toISOString();
+  await env.DB.batch([
+    env.DB.prepare('INSERT OR IGNORE INTO products(id,name,category,description,price_cents,tag,sizes_json,stock_json,images_json,active,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)')
+      .bind(FIRST_PRODUCT_ID,'Camiseta Oversized Heavy - Go into all the world – 240g','Unissex',FIRST_PRODUCT_DESCRIPTION,11990,'HEAVY 240G','[]','{}','[]',1,stamp,stamp),
+    env.DB.prepare('INSERT OR IGNORE INTO catalog_bootstrap(id,applied_at) VALUES (?,?)').bind(marker,stamp)
+  ]);
+}
+const publicProduct=row=>{
+  const keys=pickJSON(row.images_json,[]);
+  const images=keys.map(key=>'/media/'+key);
+  // Foto oficial local até cadastrar imagens do item no R2.
+  if(!images.length && row.id===FIRST_PRODUCT_ID)images.push(FIRST_PRODUCT_IMAGE);
+  return {
+    id:row.id,name:row.name,category:row.category,description:row.description,
+    price_cents:row.price_cents,tag:row.tag,sizes:pickJSON(row.sizes_json,[]),
+    stock:pickJSON(row.stock_json,{}),imageKeys:keys,
+    image:images[0]||null,images,
+    active:!!row.active,created_at:row.created_at,updated_at:row.updated_at
+  };
+};
 const publicMedia=row=>({id:row.id,kind:row.kind,slot:row.slot,title:row.title,key:row.object_key,url:'/media/'+row.object_key,active:!!row.active,created_at:row.created_at});
 async function publicRoutes(request,env,path){
   if(path==='/api/products' && request.method==='GET'){
+    await ensureFirstProduct(env);
     const rows=(await env.DB.prepare('SELECT * FROM products WHERE active = 1 ORDER BY created_at DESC').all()).results;
     return json({products:rows.map(publicProduct)});
   }
