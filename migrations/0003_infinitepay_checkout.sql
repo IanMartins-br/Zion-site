@@ -1,6 +1,7 @@
 -- Checkout InfinitePay: pedido e auditoria mínima, sem armazenar dados de cartão.
 CREATE TABLE IF NOT EXISTS zion_orders (
   order_nsu TEXT PRIMARY KEY,
+  handle TEXT NOT NULL DEFAULT '',
   status TEXT NOT NULL DEFAULT 'pending',
   items_json TEXT NOT NULL,
   customer_json TEXT NOT NULL,
