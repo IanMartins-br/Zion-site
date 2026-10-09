@@ -17,8 +17,8 @@
 <form id="loginForm" class="card login-form"><label for="password">SENHA DO ADMINISTRADOR</label><input id="password" type="password" inputmode="numeric" pattern="[0-9]{4}" autocomplete="current-password" minlength="4" maxlength="4" required placeholder="PIN de 4 dígitos"><button class="solid" type="submit">Entrar no painel ↗</button></form>
 </section>
 <section id="dashboard" hidden>
-<div class="dashboard-heading"><div><p class="kicker">ZION / GESTÃO</p><h1>Seu catálogo,<br><em>suas campanhas.</em></h1></div><p class="muted">As imagens ficam no R2. Os produtos e estoques ficam no D1.</p></div>
-<nav class="tabs" aria-label="Seções do painel"><button class="active" data-tab="products" type="button">Produtos</button><button data-tab="media" type="button">Banco de imagens</button></nav>
+<div class="dashboard-heading"><div><p class="kicker">ZION / GESTÃO</p><h1>Seu catálogo,<br><em>seus pedidos.</em></h1></div><p class="muted">As imagens ficam no R2. Os produtos e estoques ficam no D1.</p></div>
+<nav class="tabs" aria-label="Seções do painel"><button class="active" data-tab="products" type="button">Produtos</button><button data-tab="media" type="button">Banco de imagens</button><button data-tab="orders" type="button">Pedidos</button></nav>
 <section id="productsSection">
 <div class="two-column">
 <div class="card"><div class="card-title"><h2 id="formTitle">Cadastrar produto</h2><button id="resetProduct" type="button" class="outline small">Limpar</button></div>
@@ -50,8 +50,9 @@
 <div class="card"><div class="card-title"><h2>Banco de imagens</h2><span id="mediaTotal" class="muted"></span></div><div id="mediaList" class="media-list"></div></div>
 </div>
 </section>
+<section id="ordersSection" hidden><div class="card"><div class="card-title"><h2>Pedidos InfinitePay</h2><button class="outline small" id="refreshOrders" type="button">Atualizar pedidos ↻</button></div><p class="muted">Situação do pagamento, itens comprados e endereço de entrega. Os dados ficam restritos à administração.</p><div id="ordersList" class="orders-list" role="region" aria-label="Pedidos da loja">Carregando pedidos…</div></div></section>
 </section>
 <p class="status" id="feedback" role="status" aria-live="polite"></p>
 </main>
-<script defer src="/admin.js?v=zion-catalog-5"></script>
+<script defer src="/admin.js?v=zion-catalog-6"></script>
 </body></html>
