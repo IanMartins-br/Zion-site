@@ -11,7 +11,7 @@ const $ = (selector, root=document) => root.querySelector(selector);
 const $$ = (selector, root=document) => [...root.querySelectorAll(selector)];
 const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 const money = value => new Intl.NumberFormat('pt-BR',{style:'currency',currency:STORE.currency}).format(value);
-const imageUrl = (id, width=700) => !id ? '/placeholder.svg' : id.startsWith('/media/') ? id : id.startsWith('https://') ? id : `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${width}&q=82`;
+const imageUrl = (id, width=700) => !id ? '/placeholder.svg' : /^\/assets\/zion-(0770|0779|0790|0791|0799|cover-wide)\.webp$/.test(id) ? id : id.startsWith('/media/') ? id : id.startsWith('https://') ? id : `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${width}&q=82`;
 const safeRead = (key,fallback) => {try{return JSON.parse(localStorage.getItem(key))??fallback}catch{return fallback}};
 const safeSave = (key,value) => {try{localStorage.setItem(key,JSON.stringify(value))}catch{}};
 let cart = safeRead('zion-cart',[]);
@@ -98,12 +98,16 @@ function openProduct(id){
   selectedProduct=item;selectedSize=null;
   $('#modalImage').src=imageUrl(item.image,1000);$('#modalImage').alt=item.name;
   $('#modalTitle').textContent=item.name;$('#modalPrice').textContent=money(item.price);$('#modalDescription').textContent=item.description;
-  $('#sizeFeedback').textContent='';
+  const sizesKnown=item.sizes.length>0;
+  $('#sizeFeedback').textContent=sizesKnown?'':'Tamanhos e disponibilidade ainda serão confirmados.';
   $('#sizeOptions').innerHTML=item.sizes.map(size=>`<button type="button" class="size-option" data-size="${escapeHtml(size)}" aria-pressed="false">${escapeHtml(size)}</button>`).join('');
+  const buy=$('#addToCartButton');
+  buy.disabled=!sizesKnown;
+  buy.textContent=sizesKnown?'ADICIONAR À SACOLA ↗':'TAMANHOS A CONFIRMAR';
   openPanel('productModal');
 }
 function addToCart(){
-  if(!selectedProduct)return;
+  if(!selectedProduct||!selectedProduct.sizes.length)return;
   if(!selectedSize){$('#sizeFeedback').textContent='Selecione um tamanho';announce('Escolha um tamanho antes de adicionar');return}
   const line=cart.find(item=>item.id===selectedProduct.id&&item.size===selectedSize);
   if(line)line.qty+=1;else cart.push({id:selectedProduct.id,size:selectedSize,qty:1});
