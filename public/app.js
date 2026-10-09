@@ -154,7 +154,7 @@ function addToCart(){
   openPanel('cartPanel');
 }
 function renderCart(){
-  cart=cart.filter(line=>STORE.products.some(p=>p.id===line.id)&&line.qty>0);
+  cart=cart.filter(line=>{const p=STORE.products.find(item=>item.id===String(line.id));if(!p)return false;const limit=Math.max(0,Number(p.stock?.[line.size]||0));line.qty=Math.min(Math.max(0,Number(line.qty)||0),limit);return line.qty>0;});
   const box=$('#cartContents');
   if(!cart.length){box.innerHTML='<p class="empty-message">Sua sacola ainda está vazia.<br>Vamos mudar isso?</p>';$('#cartBottom').classList.add('hidden');updateCounts();return}
   $('#cartBottom').classList.remove('hidden');
@@ -200,7 +200,7 @@ $('#checkoutButton').addEventListener('click',()=>announce('A finalização de p
 $('#productsGrid').addEventListener('click',e=>{const bag=e.target.closest('[data-quick-bag]');if(bag){openProduct(bag.dataset.quickBag);return}const favorite=e.target.closest('[data-favorite]');if(favorite){toggleFavorite(favorite.dataset.favorite);return}const open=e.target.closest('[data-open-product]');if(open)openProduct(open.dataset.openProduct)});
 $('#searchResults').addEventListener('click',e=>{const btn=e.target.closest('[data-open-product]');if(btn)openProduct(btn.dataset.openProduct)});
 $('#favoritesResults').addEventListener('click',e=>{const btn=e.target.closest('[data-open-product]');if(btn)openProduct(btn.dataset.openProduct)});
-$('#cartContents').addEventListener('click',e=>{const remove=e.target.closest('[data-remove]');const qty=e.target.closest('[data-qty]');if(remove){cart.splice(Number(remove.dataset.remove),1)}else if(qty){const i=Number(qty.dataset.qty);if(cart[i])cart[i].qty+=Number(qty.dataset.delta)}else{return}cart=cart.filter(item=>item.qty>0);safeSave('zion-cart',cart);renderCart()});
+$('#cartContents').addEventListener('click',e=>{const remove=e.target.closest('[data-remove]');const qty=e.target.closest('[data-qty]');if(remove){cart.splice(Number(remove.dataset.remove),1)}else if(qty){const i=Number(qty.dataset.qty);const line=cart[i];if(line){const delta=Number(qty.dataset.delta);const item=STORE.products.find(p=>p.id===String(line.id));const limit=Math.max(0,Number(item?.stock?.[line.size]||0));line.qty=Math.max(0,Math.min(limit,line.qty+delta));if(delta>0&&line.qty>=limit)announce('Limite de estoque deste tamanho atingido');}}else{return}cart=cart.filter(item=>item.qty>0);safeSave('zion-cart',cart);renderCart()});
 renderProducts();updateCounts();updateHeader();
 
 
