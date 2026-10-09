@@ -5,7 +5,7 @@
   const money = amount => new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(amount);
   const safeImage = url => typeof url==='string' && (
     /^\/media\/products\/[a-f0-9-]{36}\.(jpg|png|webp|avif)$/.test(url) ||
-    /^\/assets\/zion-(0770|0779|0790|0791|0799|cover-wide|go-into-all-world-capa|go-into-world-(786|787|788|789|790))\.webp$/.test(url)
+    /^\/assets\/zion-(0770|0779|0790|0791|0799|cover-wide|go-into-all-world-capa|go-into-world-capa-v2|go-into-world-(786|787|788|789|790)|oba-(capa|77[4-8]))\.webp$/.test(url)
   );
   const url = new URL(window.location.href);
   const id = url.searchParams.get('id');
@@ -13,33 +13,49 @@
   const showError = () => {$('#pageLoading').hidden=true;$('#pageError').hidden=false;};
 
   function renderGallery(photoUrls) {
-    const images = [...new Set(photoUrls)].filter(safeImage);
-    if(!images.length) images.push('/placeholder.svg');
-    let selectedIndex = 0;
-    function select(i) {
-      selectedIndex=i;
-      $('#productImage').src=images[i];
-      $('#productImage').alt=item.name+' — foto '+(i+1);
-      $('#photoIndex').textContent=String(i+1).padStart(2,'0')+' / '+String(images.length).padStart(2,'0');
-      document.querySelectorAll('.thumb').forEach((btn,n)=>{
-        btn.classList.toggle('selected',n===i);
-        btn.setAttribute('aria-pressed',String(n===i));
-      });
+    const images=[...new Set(photoUrls)].filter(safeImage);
+    const list=$('#productPhotoStack');
+    const scroller=$('#productGalleryScroll');
+    list.replaceChildren();
+    if(!images.length){
+      list.textContent='Fotos deste produto disponíveis em breve.';
+      $('#photoIndex').textContent='00 / 00';
+      return;
     }
-    const wrap=$('#productThumbnails');
-    wrap.replaceChildren();
     images.forEach((src,i)=>{
-      const button=document.createElement('button');
-      button.className='thumb';
-      button.type='button';
-      button.setAttribute('aria-label','Ver foto '+(i+1));
-      const img=document.createElement('img');
-      img.loading='lazy';img.alt='';img.src=src;
-      button.appendChild(img);
-      button.addEventListener('click',()=>select(i));
-      wrap.appendChild(button);
+      const figure=document.createElement('figure');
+      figure.className='gallery-shot';
+      const photo=document.createElement('img');
+      photo.src=src;
+      photo.alt=item.name+' — imagem '+(i+1)+' de '+images.length;
+      photo.loading=i===0?'eager':'lazy';
+      photo.decoding='async';
+      figure.appendChild(photo);
+      const caption=document.createElement('figcaption');
+      caption.textContent='ZION / '+String(i+1).padStart(2,'0');
+      figure.appendChild(caption);
+      list.appendChild(figure);
     });
-    select(selectedIndex);
+    const shots=Array.from(list.children);
+    let pending=false;
+    function updateGallery(){
+      pending=false;
+      const parent=scroller.getBoundingClientRect();
+      const center=parent.top+parent.height/2;
+      let best=0,dist=Infinity;
+      shots.forEach((shot,index)=>{
+        const rect=shot.getBoundingClientRect();
+        const distance=(rect.top+rect.height/2-center)/Math.max(parent.height,1);
+        if(Math.abs(distance)<dist){dist=Math.abs(distance);best=index}
+        shot.style.setProperty('--scroll-tilt',Math.max(-5,Math.min(5,distance*5)).toFixed(2)+'deg');
+        shot.style.setProperty('--scroll-depth',(-Math.min(20,Math.abs(distance)*18)).toFixed(1)+'px');
+      });
+      $('#photoIndex').textContent=String(best+1).padStart(2,'0')+' / '+String(images.length).padStart(2,'0');
+    }
+    scroller.addEventListener('scroll',()=>{
+      if(!pending){pending=true;requestAnimationFrame(updateGallery)}
+    },{passive:true});
+    requestAnimationFrame(updateGallery);
   }
 
   function updatePurchase() {
@@ -147,6 +163,7 @@
       if(!item){showError();return}
       document.title=item.name+' | Zion Clothing';
       $('#productName').textContent=item.name;
+      $('#breadcrumbProduct').textContent=item.name;
       $('#productPrice').textContent=money(Number(item.price_cents||0)/100);
       $('#productDescription').textContent=item.description||'';
       renderGallery(item.images?.length?item.images:[item.image]);
