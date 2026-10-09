@@ -24,5 +24,8 @@
       "binding": "MEDIA",
       "bucket_name": "zion"
     }
-  ]
+  ],
+  "vars": {
+    "INFINITEPAY_HANDLE": "zion-clothing"
+  }
 }
