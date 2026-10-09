@@ -1,4 +1,4 @@
-import {checkoutRoutes} from './checkout.js';
+import {checkoutRoutes,adminCheckoutOrders} from './checkout.js';
 const json = (value,status=200,headers={}) => new Response(JSON.stringify(value),{status,headers:{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff',...headers}});
 const fail = (message,status=400) => json({error:message},status);
 const asText = (v,max=200) => String(v ?? '').trim().slice(0,max);
@@ -189,6 +189,7 @@ async function adminRoutes(request,env,path){
     await env.DB.prepare('DELETE FROM sessions WHERE token_hash = ?').bind(verified.token_hash).run();
     return json({ok:true},200,{'Set-Cookie':sessionCookie('',0)});
   }
+  if(path==='/api/admin/orders'&&request.method==='GET')return await adminCheckoutOrders(env);
   if(path==='/api/admin/products'&&request.method==='GET'){
     await ensureFirstProduct(env);
     await ensureFirstProductSizes(env);
