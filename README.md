@@ -171,12 +171,16 @@ Os pedidos pagos com estoque insuficiente ou editado após a criação são marc
 como `paid_review` para conferência manual; ainda é necessário validar o fluxo
 com concorrência e pagamentos tardios antes de vender em grande escala.
 
-## Administração por e-mail com Cloudflare Access — preparada, ainda não ativada
+## Administração por e-mail com Cloudflare Access — domínio e AUD configurados
 
-O e-mail exclusivo autorizado é `ianlucas.fm@icloud.com`, declarado também em
-`wrangler.jsonc` como `ADMIN_ALLOWED_EMAIL`. O Worker mantém o painel protegido
-pelo PIN atual **até a configuração do Cloudflare Access ser concluída**.
-Apenas adicionar o e-mail ao GitHub não cria uma política Cloudflare.
+O e-mail exclusivo autorizado é `ianlucas.fm@icloud.com`, declarado em `wrangler.jsonc` como
+`ADMIN_ALLOWED_EMAIL`. A configuração do Worker já possui:
+- `ADMIN_ACCESS_TEAM_DOMAIN`: `https://patient-thunder-76be.cloudflareaccess.com`
+- `ADMIN_ACCESS_AUD`: AUD informado pelo administrador e vinculado à aplicação Zion Admin.
+
+**Com as duas variáveis Access configuradas, o Worker exige JWT assinado com esse AUD,
+sem aceitar o PIN antigo.** O deploy e o funcionamento real da política da Cloudflare
+precisam ser verificados na produção; GitHub não configura a aplicação Access do Zero Trust.
 
 ### Ativar acesso sem PIN da Zion (sem fechar a loja)
 
@@ -191,12 +195,11 @@ Apenas adicionar o e-mail ao GitHub não cria uma política Cloudflare.
    Não use Include > Everyone ou Include > Login Methods sem restringir e-mail.
 3. Habilite **One-time PIN** como método de autenticação: um código
    temporário é enviado por e-mail; não será necessário o PIN próprio do site.
-4. Copie o domínio da equipe (por exemplo,
-   `https://seutime.cloudflareaccess.com`) e o **Application Audience (AUD) Tag**.
-   Configure no Worker `zion-site` estas variáveis:
-   - `ADMIN_ACCESS_TEAM_DOMAIN`: endereço HTTPS da equipe Cloudflare Access.
-   - `ADMIN_ACCESS_AUD`: AUD da aplicação Cloudflare Access.
-   - `ADMIN_ALLOWED_EMAIL`: `ianlucas.fm@icloud.com` (já no wrangler.jsonc).
+4. **Concluído no código:** domínio de equipe, AUD da aplicação e e-mail autorizado
+   estão registrados nas variáveis `ADMIN_ACCESS_TEAM_DOMAIN`, `ADMIN_ACCESS_AUD`
+   e `ADMIN_ALLOWED_EMAIL` do `wrangler.jsonc`.
+   Confirme que as variáveis entraram no **deploy efetivo** da Cloudflare e que
+   eventuais variáveis previamente criadas no painel não as contradizem.
 5. **Somente quando as duas variáveis Access estiverem completas**, o Worker
    aceitará o JWT RS256 **assinado** pela Cloudflare, conferindo
    `iss`, `aud`, `exp`, `nbf` e e-mail autorizado.
@@ -206,7 +209,8 @@ Apenas adicionar o e-mail ao GitHub não cria uma política Cloudflare.
    Teste também os cadastros, estoque e pedidos antes de remover o Secret
    `ADMIN_PASSWORD`.
 
-**Não remover o PIN enquanto o Cloudflare Access não estiver ativo**.
-Desativar o PIN no GitHub sem criar a política e a verificação do token deixaria
-pedidos, contatos e produtos expostos. No modo Access, o botão Sair direciona
-para o logout da Cloudflare.
+**Nota:** o PIN já é ignorado quando `ADMIN_ACCESS_TEAM_DOMAIN` ou
+`ADMIN_ACCESS_AUD` estão configurados. Se a aplicação Access bloquear seu próprio
+usuário, revise a política, os destinos e o AUD na Cloudflare, não desabilite a
+verificação do JWT. O botão Sair direciona para o logout da Cloudflare.
+Não habilite checkout/vendas até conferir acesso administrativo e o frete.
