@@ -21,6 +21,35 @@ const tokenFrom=request=>{
   const cookie=request.headers.get('Cookie')||'';
   return cookie.match(/(?:^|;\s*)CF_Authorization=([^;]+)/i)?.[1]||'';
 };
+// Cópia TEMPORÁRIA das chaves PÚBLICAS obtidas do JWKS da equipe em 2026-10-09.
+// Usar apenas se o endpoint oficial ficar indisponível para o Worker.
+// A Cloudflare gira as chaves a cada ~42 dias nesta conta; esta contingência expira
+// em 2026-11-20, evitando confiar indefinidamente em chaves aposentadas.
+// O token continua exigindo assinatura RS256, issuer, AUD, validade e e-mail exatos.
+const FALLBACK_JWKS_TEAM='https://patient-thunder-76be.cloudflareaccess.com';
+const FALLBACK_JWKS_UNTIL=Date.parse('2026-11-20T00:00:00Z');
+const FALLBACK_JWKS=[
+  {
+    "kid": "5aa09998445537ececd5bca619c38adc238616191be45e784664f322226a9d69",
+    "kty": "RSA",
+    "alg": "RS256",
+    "use": "sig",
+    "e": "AQAB",
+    "n": "pEvizV338UpsdagkscB0vROf0J8_dUp85Ukji-eiH7Wz4tx3sbB3Fl6pCpLdV_PzfkWwIV5HqVzoJoDALOFbR2U56bhXyyYRd67ZGK95cKvdQEQrXbgIpYKYBaduvKAH9M-koKLUKULAXYU4Vc6gADk_wN-2Da6EEw-0ba5z-h8ACC238D8i-8mBnz7aB9g3GGUE1MH49UKgAhzjaaBIAtJ00AsaAE8H8DCSu3T1E6oD1auT4qjWaYYmvogk5oi39Pfq5BlCCht0b5USSNDwg3HK3pSPY0fLRpOTetvLFfSA9i2J0rsfFecdL-dwnRGYKPoEPyRlI4RTOZjzVQgiSw"
+  },
+  {
+    "kid": "10f9ce4091b745de49aad528f4b59b2104248686527a8c4cae08a65b6ffa599c",
+    "kty": "RSA",
+    "alg": "RS256",
+    "use": "sig",
+    "e": "AQAB",
+    "n": "obj79oRSNJ5NPCW0fuwksJSu3nSXXnpiIbVrrLqAdERYnpKWRlnRs6NP7_1io6Yr3A-cwncDTgAGXIyIra0zzSLHd9V6DTCymE_Dc06mrbvj74SX_2FfYesvk2piWaSujT36iAyooghs-NVuSAuo4lF4U2DVTnZIQa14c1BWeNdfb1Vwv3Cj4h_Z0sL2faABCRFCET_Iud2lnKy2tDmuCAPXh7o3mYaLt-_iA8ggjof5Uepvr6-SsvCwALPQ6m8uzqQNvqTeJkSoY4FmT6nbIzBNTiNV6vvCb1mWWHh26RjnDia-LmGypuE91gWi_GOmvUIjMqNQNud4wkZgpQTdfQ"
+  }
+];
+const fallbackKey=(team,kid)=>
+  team===FALLBACK_JWKS_TEAM&&Date.now()<FALLBACK_JWKS_UNTIL
+    ?FALLBACK_JWKS.find(k=>k.kid===kid&&k.kty==='RSA'&&k.alg==='RS256'&&k.use==='sig')||null
+    :null;
 const keyCache=new Map();
 async function fetchKey(team,kid){
   const cached=keyCache.get(team);
@@ -28,13 +57,23 @@ async function fetchKey(team,kid){
     const key=cached.keys.find(k=>k.kid===kid&&k.kty==='RSA'&&(k.alg===undefined||k.alg==='RS256'));
     if(key)return key;
   }
-  const res=await fetch(team+'/cdn-cgi/access/certs',{redirect:'error'});
-  if(!res.ok)throw Error('Certificado Access indisponível');
-  const data=await res.json();
-  if(!Array.isArray(data.keys)||data.keys.length<1||data.keys.length>30)throw Error('Certificados Access inválidos');
-  const keys=data.keys.filter(k=>k.kty==='RSA'&&(k.alg===undefined||k.alg==='RS256')&&typeof k.kid==='string');
-  keyCache.set(team,{keys,expires:Date.now()+300000});
-  return keys.find(k=>k.kid===kid)||null;
+  try{
+    // Priorizar sempre as chaves ATUAIS do Access, inclusive após rotações.
+    const res=await fetch(team+'/cdn-cgi/access/certs',{redirect:'follow',headers:{Accept:'application/json'}});
+    if(!res.ok)throw Error('JWKS HTTP '+res.status);
+    const data=await res.json();
+    if(!Array.isArray(data.keys)||data.keys.length<1||data.keys.length>30)throw Error('Certificados Access inválidos');
+    const keys=data.keys.filter(k=>k.kty==='RSA'&&(k.alg===undefined||k.alg==='RS256')&&typeof k.kid==='string'&&typeof k.n==='string'&&typeof k.e==='string');
+    if(!keys.length)throw Error('Certificados Access vazios');
+    keyCache.set(team,{keys,expires:Date.now()+300000});
+    // Se o JWKS oficial respondeu, NÃO usar uma chave de contingência já removida.
+    return keys.find(k=>k.kid===kid)||null;
+  }catch(error){
+    const pinned=fallbackKey(team,kid);
+    if(!pinned)throw error;
+    console.warn('Zion admin: JWKS oficial indisponível; contingência de chave pública temporária');
+    return pinned;
+  }
 }
 export function adminAccessMode(env){
   // Uma configuração parcial não reativa a senha antiga, evitando downgrade.
