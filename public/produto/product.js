@@ -6,7 +6,7 @@
   const displayName = name => String(name??'').replace(/\s*[-–—]\s*240\s*g\s*$/i,'').trim();
   const safeImage = url => typeof url==='string' && (
     /^\/media\/products\/[a-f0-9-]{36}\.(jpg|png|webp|avif)$/.test(url) ||
-    /^\/assets\/zion-(0770|0779|0790|0791|0799|cover-wide|go-into-all-world-capa|go-into-world-capa-v2|go-into-world-(786|787|788|789|790)|oba-(capa|77[4-8]))\.webp$/.test(url)
+    /^\/assets\/zion-(0770|0779|0790|0791|0799|cover-wide|go-into-all-world-capa|go-into-world-capa-v2|go-into-world-capa-v3|go-into-world-(786|787|788|789|790)|oba-(capa|capa-v3|77[4-8]))\.webp$/.test(url)
   );
   const url = new URL(window.location.href);
   const id = url.searchParams.get('id');

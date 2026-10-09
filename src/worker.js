@@ -118,7 +118,7 @@ const publicProduct=row=>{
   // Versões WebP otimizadas, armazenadas localmente para carregamento estável.
   if(row.id===FIRST_PRODUCT_ID){
     images.unshift(
-      '/assets/zion-go-into-world-capa-v2.webp',
+      '/assets/zion-go-into-world-capa-v3.webp',
       '/assets/zion-go-into-world-790.webp', // foto de costas usada no hover
       '/assets/zion-go-into-world-786.webp',
       '/assets/zion-go-into-world-787.webp',
@@ -128,7 +128,7 @@ const publicProduct=row=>{
   }
   if(row.id===OBA_PRODUCT_ID){
     images.unshift(
-      '/assets/zion-oba-capa.webp',
+      '/assets/zion-oba-capa-v3.webp',
       '/assets/zion-oba-778.webp', // foto real de costas para hover
       '/assets/zion-oba-774.webp',
       '/assets/zion-oba-775.webp',
