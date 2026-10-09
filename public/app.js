@@ -11,6 +11,7 @@ const $ = (selector, root=document) => root.querySelector(selector);
 const $$ = (selector, root=document) => [...root.querySelectorAll(selector)];
 const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 const money = value => new Intl.NumberFormat('pt-BR',{style:'currency',currency:STORE.currency}).format(value);
+const catalogTitle = name => String(name ?? '').replace(/^Camiseta\s+Oversized\s+Heavy\s*[-–—]\s*/i,'').replace(/\s*[-–—]\s*240\s*g\s*$/i,'').trim();
 const imageUrl = (id, width=700) => !id ? '/placeholder.svg' : /^\/assets\/zion-(0770|0779|0790|0791|0799|cover-wide|go-into-all-world-capa|go-into-world-capa-v2|go-into-world-(786|787|788|789|790)|oba-(capa|77[4-8]))\.webp$/.test(id) ? id : id.startsWith('/media/') ? id : id.startsWith('https://') ? id : `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${width}&q=82`;
 const safeRead = (key,fallback) => {try{return JSON.parse(localStorage.getItem(key))??fallback}catch{return fallback}};
 const safeSave = (key,value) => {try{localStorage.setItem(key,JSON.stringify(value))}catch{}};
@@ -68,7 +69,7 @@ function productCard(product){
       </button>
       <button class="wishlist ${liked?'selected':''}" data-favorite="${escapeHtml(product.id)}" type="button" aria-label="${liked?'Remover dos':'Adicionar aos'} favoritos: ${escapeHtml(product.name)}" aria-pressed="${liked}"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 20.7 4 12.6C-1 7.6 6 1.2 12 7.6c6-6.4 13 0 8 5l-8 8.1Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg></button>
     </div>
-    <div class="product-meta"><p class="product-title"><a href="${href}">${escapeHtml(product.name)}</a></p><span class="product-price">${money(product.price)}</span></div>
+    <div class="product-meta"><p class="product-title"><a href="${href}" title="${escapeHtml(product.name)}">${escapeHtml(catalogTitle(product.name))}</a></p><span class="product-price">${money(product.price)}</span></div>
   </article>`;
 }
 function sortedProducts(list){
@@ -124,7 +125,7 @@ function openProduct(id){
   if(!item)return;
   selectedProduct=item;selectedSize=null;selectedQuantity=1;
   $('#modalImage').src=imageUrl(item.image,1000);$('#modalImage').alt=item.name;
-  $('#modalTitle').textContent=item.name;
+  $('#modalTitle').textContent=catalogTitle(item.name);
   $('#modalPrice').textContent=money(item.price);
   $('#modalFullDetails').href=productPageUrl(item.id);
   const sizes=Array.isArray(item.sizes)?item.sizes:[];

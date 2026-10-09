@@ -3,6 +3,7 @@
   'use strict';
   const $ = selector => document.querySelector(selector);
   const money = amount => new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(amount);
+  const displayName = name => String(name??'').replace(/\s*[-–—]\s*240\s*g\s*$/i,'').trim();
   const safeImage = url => typeof url==='string' && (
     /^\/media\/products\/[a-f0-9-]{36}\.(jpg|png|webp|avif)$/.test(url) ||
     /^\/assets\/zion-(0770|0779|0790|0791|0799|cover-wide|go-into-all-world-capa|go-into-world-capa-v2|go-into-world-(786|787|788|789|790)|oba-(capa|77[4-8]))\.webp$/.test(url)
@@ -47,8 +48,8 @@
         const rect=shot.getBoundingClientRect();
         const distance=(rect.top+rect.height/2-center)/Math.max(parent.height,1);
         if(Math.abs(distance)<dist){dist=Math.abs(distance);best=index}
-        shot.style.setProperty('--scroll-tilt',Math.max(-5,Math.min(5,distance*5)).toFixed(2)+'deg');
-        shot.style.setProperty('--scroll-depth',(-Math.min(20,Math.abs(distance)*18)).toFixed(1)+'px');
+        shot.style.setProperty('--scroll-tilt',Math.max(-1.8,Math.min(1.8,distance*1.8)).toFixed(2)+'deg');
+        shot.style.setProperty('--scroll-depth',(-Math.min(8,Math.abs(distance)*8)).toFixed(1)+'px');
       });
       $('#photoIndex').textContent=String(best+1).padStart(2,'0')+' / '+String(images.length).padStart(2,'0');
     }
@@ -162,8 +163,8 @@
       item=(Array.isArray(data.products)?data.products:[]).find(p=>String(p.id)===id);
       if(!item){showError();return}
       document.title=item.name+' | Zion Clothing';
-      $('#productName').textContent=item.name;
-      $('#breadcrumbProduct').textContent=item.name;
+      $('#productName').textContent=displayName(item.name);
+      $('#breadcrumbProduct').textContent=displayName(item.name);
       $('#productPrice').textContent=money(Number(item.price_cents||0)/100);
       $('#productDescription').textContent=item.description||'';
       renderGallery(item.images?.length?item.images:[item.image]);
