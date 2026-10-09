@@ -25,14 +25,14 @@ const keyCache=new Map();
 async function fetchKey(team,kid){
   const cached=keyCache.get(team);
   if(cached&&cached.expires>Date.now()){
-    const key=cached.keys.find(k=>k.kid===kid&&k.kty==='RSA'&&k.alg==='RS256');
+    const key=cached.keys.find(k=>k.kid===kid&&k.kty==='RSA'&&(k.alg===undefined||k.alg==='RS256'));
     if(key)return key;
   }
   const res=await fetch(team+'/cdn-cgi/access/certs',{redirect:'error'});
   if(!res.ok)throw Error('Certificado Access indisponível');
   const data=await res.json();
   if(!Array.isArray(data.keys)||data.keys.length<1||data.keys.length>30)throw Error('Certificados Access inválidos');
-  const keys=data.keys.filter(k=>k.kty==='RSA'&&k.alg==='RS256'&&typeof k.kid==='string');
+  const keys=data.keys.filter(k=>k.kty==='RSA'&&(k.alg===undefined||k.alg==='RS256')&&typeof k.kid==='string');
   keyCache.set(team,{keys,expires:Date.now()+300000});
   return keys.find(k=>k.kid===kid)||null;
 }
@@ -42,6 +42,7 @@ export function adminAccessMode(env){
 }
 export async function adminAccessIdentity(request,env){
   if(!accessConfigured(env))return null;
+  if(String(env.ADMIN_ALLOWED_EMAIL||'').trim().toLowerCase()!==ADMIN_EMAIL)return null;
   const token=tokenFrom(request);
   if(!token||token.length>12000)return null;
   const parts=token.split('.');
