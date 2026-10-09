@@ -97,7 +97,7 @@ const OBA_DESCRIPTION=[
   '• Reforço ombro a ombro — maior durabilidade',
   '',
   'ENVIO PARA TODO O BRASIL'
-].join('\\n');
+].join(String.fromCharCode(10));
 
 async function ensureObaProduct(env) {
   const marker='second-oba-awon-oba-v1';
