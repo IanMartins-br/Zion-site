@@ -109,7 +109,7 @@ async function uploadPhotos(files,kind,slot,title){
 }
 // A administração usa exclusivamente Cloudflare Access: não mostrar ou enviar PIN local.
 $('logoutButton').addEventListener('click',()=>{window.location.assign('/cdn-cgi/access/logout')});
-$('[data-tab]').forEach(b=>b.addEventListener('click',()=>changeTab(b.dataset.tab)));
+$$('[data-tab]').forEach(b=>b.addEventListener('click',()=>changeTab(b.dataset.tab)));
 $('refreshOrders').addEventListener('click',refreshOrders);
 $('resetProduct').addEventListener('click',resetForm);
 $('productImagePicker').addEventListener('click',e=>{
