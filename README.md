@@ -171,6 +171,24 @@ Os pedidos pagos com estoque insuficiente ou editado após a criação são marc
 como `paid_review` para conferência manual; ainda é necessário validar o fluxo
 com concorrência e pagamentos tardios antes de vender em grande escala.
 
+### Contingência temporária de certificados Access (2026-10-09)
+
+O Worker tenta carregar o JWKS oficial da equipe
+`https://patient-thunder-76be.cloudflareaccess.com/cdn-cgi/access/certs`
+e conserva em memória as chaves por 5 minutos. Em caso de indisponibilidade
+da consulta externa, há uma cópia **somente das duas chaves PÚBLICAS** fornecidas
+pelo administrador em 09/10/2026, limitada ao Team Domain exato e válida
+**somente até 20/11/2026**. Isso não desativa autenticação: as assinaturas
+RSA-SHA256, `iss`, `aud`, expiração e e-mail continuam obrigatórios.
+Uma chave desconhecida nunca é aceita; se o JWKS oficial responder, ele é
+autoritativo (sem recorrer a uma chave antiga removida).
+
+**Atenção:** esta é uma medida temporária para `ACCESS_CERT_FETCH_FAILED`.
+Investigar por que `fetch()` não acessa o endpoint oficial **antes de
+20/11/2026**, removendo depois a contingência. Chaves Access são rotacionadas
+no painel Cloudflare (intervalo atual de 42 dias). Nunca colar tokens JWT ou
+cookies `CF_Authorization` em tickets públicos.
+
 ## Administração por e-mail com Cloudflare Access — domínio e AUD configurados
 
 O e-mail exclusivo autorizado é `ianlucas.fm@icloud.com`, declarado em `wrangler.jsonc` como
