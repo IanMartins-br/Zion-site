@@ -49,16 +49,23 @@ function openPanel(id){
   if(id==='cartPanel')renderCart();
   if(id==='productModal')setTimeout(()=>$('#modalTitle').focus?.(),100);
 }
+const productPageUrl = id => '/produto/?id='+encodeURIComponent(String(id));
 function productCard(product){
   const liked=favorites.includes(String(product.id));
-  return `<article class="product-card">
+  const images=Array.isArray(product.images)?product.images:[];
+  // O hover só existe se a segunda foto foi cadastrada explicitamente.
+  const second=images.length>1 && images[1]!==images[0] ? images[1] : null;
+  const preview=second ? `<div class="product-hover-preview" aria-hidden="true"><img src="${imageUrl(second,800)}" alt="" loading="lazy" decoding="async"></div>` : '';
+  const href=productPageUrl(product.id);
+  return `<article class="product-card${second?' has-preview':''}">
     <div class="product-image-wrap">
-      <button class="product-photo-trigger" type="button" data-open-product="${product.id}" aria-label="Ver ${escapeHtml(product.name)}"><img src="${imageUrl(product.image)}" alt="${escapeHtml(product.name)}" loading="lazy"></button>
+      <a class="product-photo-trigger" href="${href}" target="_blank" rel="noopener noreferrer" aria-label="Abrir ${escapeHtml(product.name)} em nova aba"><img src="${imageUrl(product.image)}" alt="${escapeHtml(product.name)}" loading="lazy" decoding="async"></a>
       ${product.tag?`<span class="product-flag">${escapeHtml(product.tag)}</span>`:''}
       <button class="wishlist ${liked?'selected':''}" data-favorite="${product.id}" type="button" aria-label="${liked?'Remover dos':'Adicionar aos'} favoritos: ${escapeHtml(product.name)}" aria-pressed="${liked}"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 20.7 4 12.6C-1 7.6 6 1.2 12 7.6c6-6.4 13 0 8 5l-8 8.1Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg></button>
-      <button class="quick-add" type="button" data-open-product="${product.id}">+ VER DETALHES</button>
+      <a class="quick-add" href="${href}" target="_blank" rel="noopener noreferrer" aria-label="Comprar ${escapeHtml(product.name)} em nova aba">COMPRAR <span aria-hidden="true">↗</span></a>
     </div>
-    <div class="product-meta"><div><p class="product-title">${escapeHtml(product.name)}</p><p class="product-category">${escapeHtml(product.category)}</p></div><span class="product-price">${money(product.price)}</span></div>
+    ${preview}
+    <div class="product-meta"><div><p class="product-title"><a href="${href}" target="_blank" rel="noopener noreferrer">${escapeHtml(product.name)}</a></p><p class="product-category">${escapeHtml(product.category)}</p></div><span class="product-price">${money(product.price)}</span></div>
   </article>`;
 }
 function sortedProducts(list){
@@ -127,7 +134,7 @@ function renderSearch(){
   const filtered=q?STORE.products.filter(p=>normalize(`${escapeHtml(p.name)} ${escapeHtml(p.category)} ${p.description}`).includes(q)):STORE.products.slice(0,5);
   $('#searchResults').innerHTML=filtered.length?filtered.map(miniProduct).join(''):'<p class="empty-message">Nenhuma peça encontrada.</p>';
 }
-function miniProduct(p){return `<button type="button" class="mini-product mini-product-button" data-open-product="${p.id}"><img src="${imageUrl(p.image,300)}" alt=""><span><p>${escapeHtml(p.name)}</p><small>${escapeHtml(p.category)} · ${money(p.price)}</small></span></button>`}
+function miniProduct(p){return `<a class="mini-product mini-product-button" href="${productPageUrl(p.id)}" target="_blank" rel="noopener noreferrer"><img src="${imageUrl(p.image,300)}" alt=""><span><p>${escapeHtml(p.name)}</p><small>${escapeHtml(p.category)} · ${money(p.price)}</small></span></a>`}
 function renderFavorites(){
   const items=STORE.products.filter(p=>favorites.includes(String(p.id)));
   $('#favoritesResults').innerHTML=items.length?items.map(miniProduct).join(''):'<p class="empty-message">Salve as peças que você mais gosta e encontre tudo por aqui.</p>';
@@ -172,7 +179,8 @@ async function loadCatalog(){
       id:String(p.id),name:p.name,category:p.category,createdAt:p.created_at,
       price:p.price_cents/100,tag:p.tag||'',description:p.description||'',
       sizes:(p.sizes||[]).filter(size=>(p.stock?.[size]??0)>0),
-      image:p.image||null
+      image:p.image||null,
+      images:Array.isArray(p.images)?p.images:[]
     }));
     cart=cart.filter(item=>STORE.products.some(p=>p.id===String(item.id)));
     favorites=favorites.map(String).filter(id=>STORE.products.some(p=>p.id===id));
