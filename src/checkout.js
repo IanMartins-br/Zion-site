@@ -202,9 +202,11 @@ export async function checkoutRoutes(request,env,path){
     let status;
     try{status=await verifyPayment(env,order,slug,transaction)}
     catch(err){console.error('InfinitePay payment_check:',String(err));return error('Não foi possível confirmar o pagamento.',502);}
-    return status==='amount_mismatch'?error('Valor do pagamento divergente. Entre em contato com a loja.',409):
-      result({success:true,paid:status==='paid'||status==='paid_review',status,order_nsu:id,
-        review_required:status==='paid_review'});
+    if(path==='/api/checkout/webhook' && (status==='pending'||status==='confirming'))
+      return error('Confirmação pendente: a InfinitePay deve tentar novamente.',400);
+    if(status==='amount_mismatch')return error('Valor de pagamento divergente.',path==='/api/checkout/webhook'?400:409);
+    return result({success:true,paid:status==='paid'||status==='paid_review',status,order_nsu:id,
+      review_required:status==='paid_review'});
   }
   return error('Rota não encontrada.',404);
 }
