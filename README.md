@@ -232,3 +232,21 @@ precisam ser verificados na produção; GitHub não configura a aplicação Acce
 usuário, revise a política, os destinos e o AUD na Cloudflare, não desabilite a
 verificação do JWT. O botão Sair direciona para o logout da Cloudflare.
 Não habilite checkout/vendas até conferir acesso administrativo e o frete.
+
+## Novas camisetas — rascunhos da coleção
+
+Os seguintes produtos são criados automaticamente no D1 quando as rotas
+`/api/products` ou `/api/admin/products` são acessadas pela primeira vez:
+
+- **Camiseta Oversized Heavy — Sacrifício não é derrota (240g)** — Isaías 53:7.
+- **Camiseta Oversized Premium — Yesterday, today, everyday (170g)** — Hebreus 13:8.
+
+Ambos contêm descrição, versículo, diferenciais e especificações informados pela loja.
+**Permanecem ocultos do catálogo (`active=0`)** com preço provisório de R$ 0,00,
+estoque zerado e sem imagens. Os tamanhos P/M/G/GG são um ponto de partida a
+confirmar. Esses números **não são preço nem estoque aprovados para venda**.
+
+Acesse `/admin` → Produtos → Editar para definir o preço correto, confirmar
+tamanhos e estoque, escolher as fotografias e marcar **Produto visível no site**
+apenas quando tudo estiver pronto. O bootstrap é idempotente e possui marcadores:
+caso um produto seja apagado, ele não será recriado automaticamente.

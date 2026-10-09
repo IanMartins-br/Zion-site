@@ -50,7 +50,7 @@ function renderProducts(){
  $('productTotal').textContent=state.products.length+' cadastrados';
  $('productList').innerHTML=state.products.length?state.products.map(p=>`
  <div class="item"><img src="${esc(imgsrc(p.image))}" alt=""><div class="item-details"><strong>${esc(p.name)}</strong>
- <small>${esc(p.category)} · ${currency(p.price_cents)} · ${p.active?'Publicado':'Oculto'}</small>
+ <small>${esc(p.category)} · ${p.price_cents>0?currency(p.price_cents):'Preço a definir'} · ${p.active?'Publicado':'Rascunho / oculto'}</small>
  <small>${Object.entries(p.stock||{}).map(([s,n])=>esc(s)+': '+n).join(' / ')}</small>
  </div><div class="item-actions"><button class="outline" type="button" data-edit="${p.id}">Editar</button><button class="outline" type="button" data-delete="${p.id}">Excluir</button></div></div>`).join(''):'<p class="muted">Nenhum produto cadastrado. Comece pelo formulário ao lado.</p>';
 }

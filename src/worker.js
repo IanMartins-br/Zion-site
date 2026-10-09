@@ -112,6 +112,42 @@ async function ensureObaProduct(env) {
     env.DB.prepare('INSERT OR IGNORE INTO catalog_bootstrap(id,applied_at) VALUES (?,?)').bind(marker,stamp)
   ]);
 }
+// Próximas peças: cadastro como RASCUNHO para não inventar preço, estoque ou fotos.
+// A edição é feita pelo admin. Marcadores impedem recriação após exclusão.
+const ZION_DRAFT_PRODUCTS = [
+  {
+    "id": "a4cb1e37-1c60-4a93-b87a-18c17f24e53d",
+    "marker": "zion-sacrificio-nao-e-derrota-240g-v1",
+    "name": "Camiseta Oversized Heavy - Sacrifício não é derrota – 240g",
+    "tag": "HEAVY 240G",
+    "description": "“Ele foi oprimido e humilhado, mas não abriu a boca. Como cordeiro foi levado ao matadouro e, como ovelha muda diante dos seus tosquiadores, ele não abriu a boca.”\n(Isaías 53:7)\n\nIsaías 53:7 mostra um Salvador que escolheu o silêncio e a obediência, carregando a dor do mundo por amor. Essa peça representa o amor de Jesus por nós.\n\nConfeccionada no Modelo Premium, com 100% algodão penteado 30.1, toque macio e estampa DTF duradoura. O caimento Oversized proporciona um visual moderno e autêntico.\n\nDiferenciais:\n• Modelo Heavy — gramatura 240g: tecido encorpado e confortável\n• Tecnologia DTF — não desbota na lavagem\n• Modelagem Oversized — estilo e conforto\n• 100% algodão penteado 30.1\n• Reforço ombro a ombro — maior durabilidade\n\nENVIO PARA TODO O BRASIL"
+  },
+  {
+    "id": "ab7d66dc-8907-4695-a133-47c2e19807ac",
+    "marker": "zion-yesterday-today-everyday-170g-v1",
+    "name": "Camiseta Oversized Premium - Yesterday, today, everyday – 170g",
+    "tag": "PREMIUM 170G",
+    "description": "Jesus Cristo é o mesmo, ontem, hoje e para sempre.\n(Hebreus 13:8)\n\nTudo muda, mas Deus permanece o mesmo. Essa peça representa a segurança de que, independentemente das circunstâncias, a Palavra de Deus continua fiel.\n\nConfeccionada no Modelo Premium, com 100% algodão penteado 30.1, toque macio e estampa DTF duradoura. O caimento Oversized proporciona um visual moderno e autêntico.\n\nDiferenciais:\n• Modelo Premium\n• Gramatura 170g — tecido encorpado e confortável\n• Tecnologia DTF — não desbota na lavagem\n• Modelagem Oversized — estilo e conforto\n• 100% algodão penteado 30.1\n• Reforço ombro a ombro — maior durabilidade\n\nENVIO PARA TODO O BRASIL"
+  }
+];
+async function ensureDraftProducts(env){
+  const sizes=JSON.stringify(['P','M','G','GG']); // Padrão inicial do cadastro, estoque sempre zerado.
+  const stock=JSON.stringify({P:0,M:0,G:0,GG:0});
+  for(const product of ZION_DRAFT_PRODUCTS){
+    const applied=await env.DB.prepare('SELECT id FROM catalog_bootstrap WHERE id=?').bind(product.marker).first();
+    if(applied)continue;
+    const stamp=new Date().toISOString();
+    await env.DB.batch([
+      env.DB.prepare(`INSERT OR IGNORE INTO products
+        (id,name,category,description,price_cents,tag,sizes_json,stock_json,images_json,active,created_at,updated_at)
+        SELECT ?,?,?,?,?,?,?,?,?,?,?,?
+        WHERE NOT EXISTS (SELECT 1 FROM products WHERE LOWER(name)=LOWER(?))`)
+        .bind(product.id,product.name,'Unissex',product.description,0,product.tag,sizes,stock,'[]',0,stamp,stamp,product.name),
+      env.DB.prepare('INSERT OR IGNORE INTO catalog_bootstrap(id,applied_at) VALUES (?,?)').bind(product.marker,stamp)
+    ]);
+  }
+}
+
 const publicProduct=row=>{
   const keys=pickJSON(row.images_json,[]);
   const images=keys.map(key=>'/media/'+key);
@@ -152,6 +188,7 @@ async function publicRoutes(request,env,path){
     await ensureFirstProduct(env);
     await ensureFirstProductSizes(env);
     await ensureObaProduct(env);
+    await ensureDraftProducts(env);
     const rows=(await env.DB.prepare('SELECT * FROM products WHERE active = 1 ORDER BY created_at DESC').all()).results;
     return json({products:rows.map(publicProduct)});
   }
@@ -203,6 +240,7 @@ async function adminRoutes(request,env,path){
     await ensureFirstProduct(env);
     await ensureFirstProductSizes(env);
     await ensureObaProduct(env);
+    await ensureDraftProducts(env);
     const rows=(await env.DB.prepare('SELECT * FROM products ORDER BY created_at DESC').all()).results;
     return json({products:rows.map(publicProduct)});
   }
