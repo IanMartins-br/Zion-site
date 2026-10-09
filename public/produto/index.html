@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Confira detalhes, tamanhos e envio dos produtos Zion Clothing.">
+<title>Produto | Zion Clothing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/produto/product.css?v=1">
+<script defer src="/produto/product.js?v=1"></script>
+</head>
+<body>
+<div class="announcement">ZION CLOTHING &nbsp; / &nbsp; STREETWEAR COM PROPÓSITO</div>
+<header class="header"><a class="brand" href="/#inicio" aria-label="Zion Clothing, início">ZION<span>.</span></a><a class="back" href="/#catalogo">← VOLTAR À COLEÇÃO</a></header>
+<main class="page">
+ <div id="pageLoading" class="message" role="status">Carregando peça da coleção…</div>
+ <div id="pageError" class="message" role="alert" hidden>Não foi possível localizar esse produto. <a href="/#catalogo">Voltar ao catálogo</a>.</div>
+ <article id="productPage" class="product-layout" hidden>
+  <div class="gallery">
+   <div class="hero-photo"><img id="productImage" alt="" decoding="async"><span class="photo-index" id="photoIndex">01 / 01</span></div>
+   <div class="thumbnails" id="productThumbnails" role="group" aria-label="Fotografias do produto"></div>
+  </div>
+  <div class="details">
+   <div class="overline">ZION / COLEÇÃO OFICIAL</div>
+   <h1 id="productName"></h1>
+   <div class="price" id="productPrice"></div>
+   <div class="divider"></div>
+   <p class="eyebrow">ESCOLHA SEU TAMANHO</p>
+   <div id="sizePicker" class="sizes" role="group" aria-label="Selecione o tamanho"></div>
+   <p id="stockFeedback" class="hint" aria-live="polite"></p>
+   <div class="quantity"><span>QUANTIDADE</span><div class="qty-widget"><button type="button" id="qtyLess" aria-label="Diminuir quantidade">−</button><output id="qtyValue">1</output><button type="button" id="qtyMore" aria-label="Aumentar quantidade">+</button></div></div>
+   <button id="buyButton" class="buy" type="button" disabled>SELECIONE UM TAMANHO <span>↗</span></button>
+   <p class="checkout-hint">A sacola está em preparação. O pagamento online ainda não está habilitado.</p>
+   <section class="shipping" aria-label="Simular frete">
+    <h2>CONSULTAR FRETE <span>↗</span></h2>
+    <p>Digite seu CEP para uma estimativa ilustrativa de entrega expressa com o SEDEX como referência.</p>
+    <form id="shippingForm"><label class="sr-only" for="zipCode">CEP de destino</label><input id="zipCode" inputmode="numeric" autocomplete="postal-code" maxlength="9" placeholder="00000-000" required><button type="submit">SIMULAR</button></form>
+    <div id="shippingResult" class="shipping-result" role="status" aria-live="polite"></div>
+    <small>Simulação informativa, não é cotação oficial dos Correios. Valores e prazos definitivos dependem da origem, embalagem, serviço disponível e integração com os Correios.</small>
+   </section>
+   <section class="description"><h2>SOBRE A PEÇA</h2><div id="productDescription"></div></section>
+   <p class="nationwide">ENVIO PARA TODO O BRASIL</p>
+  </div>
+ </article>
+</main>
+<footer class="footer"><span>ZION CLOTHING</span><span>FEITO PARA VIVER. FEITO COM PROPÓSITO.</span></footer>
+</body></html>
