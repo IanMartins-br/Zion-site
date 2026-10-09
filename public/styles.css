@@ -399,3 +399,62 @@ body.zion-intro-lock{overflow:hidden}
   .quick-purchase-modal .modal-price{font-size:17px;margin:0 0 21px}
   .quick-purchase-modal .modal-close{top:8px;right:9px}
 }
+
+/* CATÁLOGO v6 — capa ocupa 100% do card sem margens artificiais.
+   Mockups aprovados são quadrados: o quadro levemente vertical (10%)
+   mostra a camiseta inteira, inclusive as mangas. */
+.product-card .product-image-wrap{
+  aspect-ratio:10/11;
+  background:#f0f0ee;
+  border-radius:10px;
+}
+.product-card .product-photo-trigger .product-main-image{
+  width:100%;
+  height:100%;
+  padding:0;
+  margin:0;
+  object-fit:cover;
+  object-position:50% 50%;
+}
+.product-card .product-photo-trigger .product-hover-image{
+  width:100%;
+  height:100%;
+  padding:0;
+  object-fit:cover;
+}
+.product-card .product-meta{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  justify-content:flex-start;
+  gap:5px;
+  margin-top:12px;
+  text-align:left;
+}
+.product-card .product-title{
+  display:block;
+  width:100%;
+  max-width:100%;
+  margin:0;
+  line-height:1.45;
+  font-size:12px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.product-card .product-title a{display:block;overflow:hidden;text-overflow:ellipsis}
+.product-card .product-price{
+  display:block;
+  margin:0;
+  line-height:1.5;
+  text-align:left;
+  font-size:12px;
+  font-weight:650;
+}
+@media(max-width:700px){
+ .product-card .product-image-wrap{aspect-ratio:10/11;border-radius:8px}
+ .product-card .product-photo-trigger .product-main-image{padding:0}
+ .product-card .product-meta{flex-direction:column;align-items:flex-start;gap:4px;margin-top:10px}
+ .product-card .product-price{margin:0}
+ .product-card .product-title{font-size:11px}
+}
