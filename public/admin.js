@@ -27,7 +27,7 @@ async function refresh(){
  state.products=products.products||[];state.media=media.images||[];
  renderProducts();renderMedia();renderPicker();
 }
-function imgsrc(key){return /^\/(media)\/(products|editorials)\/[a-f0-9-]{36}\.(jpg|png|webp|avif)$/.test(key)?key:'/placeholder.svg'}
+function imgsrc(key){return key==='/assets/zion-0790.webp'?key:/^\/(media)\/(products|editorials)\/[a-f0-9-]{36}\.(jpg|png|webp|avif)$/.test(key)?key:'/placeholder.svg'}
 function renderProducts(){
  $('productTotal').textContent=state.products.length+' cadastrados';
  $('productList').innerHTML=state.products.length?state.products.map(p=>`
