@@ -27,7 +27,7 @@ async function refresh(){
  state.products=products.products||[];state.media=media.images||[];
  renderProducts();renderMedia();renderPicker();
 }
-function imgsrc(key){return (/^\/assets\/zion-(0790|go-into-all-world-capa|go-into-world-capa-v2|oba-capa)\.webp$/.test(key))?key:/^\/(media)\/(products|editorials)\/[a-f0-9-]{36}\.(jpg|png|webp|avif)$/.test(key)?key:'/placeholder.svg'}
+function imgsrc(key){return (/^\/assets\/zion-(0790|go-into-all-world-capa|go-into-world-capa-v2|go-into-world-capa-v3|oba-capa|oba-capa-v3)\.webp$/.test(key))?key:/^\/(media)\/(products|editorials)\/[a-f0-9-]{36}\.(jpg|png|webp|avif)$/.test(key)?key:'/placeholder.svg'}
 function renderProducts(){
  $('productTotal').textContent=state.products.length+' cadastrados';
  $('productList').innerHTML=state.products.length?state.products.map(p=>`
