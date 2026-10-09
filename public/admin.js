@@ -1,7 +1,7 @@
 
 const $=id=>document.getElementById(id);
 const $$=(q,root=document)=>Array.from(root.querySelectorAll(q));
-const state={products:[],media:[],editing:null,selected:[]};
+const state={products:[],media:[],editing:null,selected:[],accessEmail:false};
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const currency=v=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format((v||0)/100);
 const stamp=()=>Date.now();
@@ -17,7 +17,7 @@ async function api(path,options={}){
  return data;
 }
 const body=val=>({method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(val)});
-function showDashboard(visible){$('loginView').hidden=visible;$('dashboard').hidden=!visible;$('logoutButton').hidden=!visible}
+function showDashboard(visible){$('loginView').hidden=visible;$('dashboard').hidden=!visible;$('logoutButton').hidden=!visible;$('logoutButton').textContent=state.accessEmail?'Sair do acesso por e-mail':'Sair'}
 function changeTab(tab){
  $$('[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
  $('productsSection').hidden=tab!=='products';$('mediaSection').hidden=tab!=='media';$('ordersSection').hidden=tab!=='orders';
@@ -114,7 +114,7 @@ $('loginForm').addEventListener('submit',async e=>{
   $('password').value='';showDashboard(true);await refresh();notify('Bem-vindo ao painel da Zion.');
  }catch(err){notify(err.message,true)}finally{button.disabled=false}
 });
-$('logoutButton').addEventListener('click',async()=>{try{await api('/api/admin/logout',{method:'POST'})}catch{}showDashboard(false);resetForm();notify('Sessão encerrada.')});
+$('logoutButton').addEventListener('click',async()=>{if(state.accessEmail){window.location.assign('/cdn-cgi/access/logout');return}try{await api('/api/admin/logout',{method:'POST'})}catch{}showDashboard(false);resetForm();notify('Sessão encerrada.')});
 $('[data-tab]').forEach(b=>b.addEventListener('click',()=>changeTab(b.dataset.tab)));
 $('refreshOrders').addEventListener('click',refreshOrders);
 $('resetProduct').addEventListener('click',resetForm);
@@ -172,4 +172,4 @@ $('mediaList').addEventListener('click',async e=>{
  await refresh();notify('Banco de imagens atualizado.');
  }catch(err){notify(err.message,true)}
 });
-api('/api/admin/me').then(async()=>{showDashboard(true);await refresh()}).catch(()=>showDashboard(false));
+api('/api/admin/me').then(async info=>{state.accessEmail=info.provider==='cloudflare-access';showDashboard(true);await refresh()}).catch(err=>{showDashboard(false);if(err.message.includes('Cloudflare')){document.querySelector('#loginView .muted').textContent='Este painel é exclusivo do e-mail autorizado. A autenticação por e-mail deve ser concluída na Cloudflare Access.';$('loginForm').hidden=true;notify(err.message,true)}});
