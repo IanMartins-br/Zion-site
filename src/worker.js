@@ -79,6 +79,37 @@ async function ensureFirstProductSizes(env) {
     env.DB.prepare('INSERT OR IGNORE INTO catalog_bootstrap(id,applied_at) VALUES (?,?)').bind(marker,stamp)
   ]);
 }
+// Segunda peça da coleção: imagem real e mockup aprovados, estoque não informado.
+const OBA_PRODUCT_ID='c2e7a9b4-71f5-42d6-a9b4-d4f2fd7b2b18';
+const OBA_DESCRIPTION=[
+  'No seu manto e na sua coxa está escrito um nome: “Rei dos reis e Senhor dos senhores”.',
+  '(Apocalipse 19:16)',
+  '',
+  'Jesus é revelado como o Rei supremo, que está acima de todo poder. Essa peça representa a certeza de que Deus é o nosso único Senhor.',
+  '',
+  'Confeccionada no Modelo Premium, com 100% algodão penteado 30.1, toque macio e estampa DTF duradoura. O caimento Oversized proporciona um visual moderno e autêntico.',
+  '',
+  'Diferenciais:',
+  '• Modelo Heavy — gramatura 240g: tecido encorpado e confortável',
+  '• Tecnologia DTF — não desbota na lavagem',
+  '• Modelagem Oversized — estilo e conforto',
+  '• 100% algodão penteado 30.1',
+  '• Reforço ombro a ombro — maior durabilidade',
+  '',
+  'ENVIO PARA TODO O BRASIL'
+].join(String.fromCharCode(10));
+
+async function ensureObaProduct(env) {
+  const marker='second-oba-awon-oba-v1';
+  const seen=await env.DB.prepare('SELECT id FROM catalog_bootstrap WHERE id = ?').bind(marker).first();
+  if(seen)return;
+  const stamp=new Date().toISOString();
+  await env.DB.batch([
+    env.DB.prepare('INSERT OR IGNORE INTO products(id,name,category,description,price_cents,tag,sizes_json,stock_json,images_json,active,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)')
+      .bind(OBA_PRODUCT_ID,'Camiseta Oversized Heavy - Oba Awon Oba – 240g','Unissex',OBA_DESCRIPTION,11990,'HEAVY 240G','["P","M","G","GG"]','{"P":0,"M":0,"G":0,"GG":0}','[]',1,stamp,stamp),
+    env.DB.prepare('INSERT OR IGNORE INTO catalog_bootstrap(id,applied_at) VALUES (?,?)').bind(marker,stamp)
+  ]);
+}
 const publicProduct=row=>{
   const keys=pickJSON(row.images_json,[]);
   const images=keys.map(key=>'/media/'+key);
@@ -87,12 +118,22 @@ const publicProduct=row=>{
   // Versões WebP otimizadas, armazenadas localmente para carregamento estável.
   if(row.id===FIRST_PRODUCT_ID){
     images.unshift(
-      '/assets/zion-go-into-all-world-capa.webp',
+      '/assets/zion-go-into-world-capa-v2.webp',
+      '/assets/zion-go-into-world-790.webp', // foto de costas usada no hover
       '/assets/zion-go-into-world-786.webp',
       '/assets/zion-go-into-world-787.webp',
       '/assets/zion-go-into-world-788.webp',
-      '/assets/zion-go-into-world-789.webp',
-      '/assets/zion-go-into-world-790.webp'
+      '/assets/zion-go-into-world-789.webp'
+    );
+  }
+  if(row.id===OBA_PRODUCT_ID){
+    images.unshift(
+      '/assets/zion-oba-capa.webp',
+      '/assets/zion-oba-778.webp', // foto real de costas para hover
+      '/assets/zion-oba-774.webp',
+      '/assets/zion-oba-775.webp',
+      '/assets/zion-oba-776.webp',
+      '/assets/zion-oba-777.webp'
     );
   }
   return {
@@ -108,6 +149,7 @@ async function publicRoutes(request,env,path){
   if(path==='/api/products' && request.method==='GET'){
     await ensureFirstProduct(env);
     await ensureFirstProductSizes(env);
+    await ensureObaProduct(env);
     const rows=(await env.DB.prepare('SELECT * FROM products WHERE active = 1 ORDER BY created_at DESC').all()).results;
     return json({products:rows.map(publicProduct)});
   }
@@ -147,6 +189,9 @@ async function adminRoutes(request,env,path){
     return json({ok:true},200,{'Set-Cookie':sessionCookie('',0)});
   }
   if(path==='/api/admin/products'&&request.method==='GET'){
+    await ensureFirstProduct(env);
+    await ensureFirstProductSizes(env);
+    await ensureObaProduct(env);
     const rows=(await env.DB.prepare('SELECT * FROM products ORDER BY created_at DESC').all()).results;
     return json({products:rows.map(publicProduct)});
   }

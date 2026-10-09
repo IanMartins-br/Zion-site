@@ -8,19 +8,35 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/produto/product.css?v=2">
-<script defer src="/produto/product.js?v=2"></script>
+<link rel="stylesheet" href="/produto/product.css?v=3">
+<script defer src="/produto/product.js?v=3"></script>
 </head>
 <body>
-<div class="announcement">ZION CLOTHING &nbsp; / &nbsp; STREETWEAR COM PROPÓSITO</div>
-<header class="header"><a class="brand" href="/#inicio" aria-label="Zion Clothing, início">ZION<span>.</span></a><a class="back" href="/#catalogo">← VOLTAR À COLEÇÃO</a></header>
+<div class="announcement"><span>ESTILO. IDENTIDADE. PROPÓSITO.</span><span>ENVIO PARA TODO O BRASIL</span></div>
+<header class="header">
+  <div class="header-primary">
+    <a class="back" href="/#catalogo" aria-label="Voltar ao catálogo">← VOLTAR À LOJA</a>
+    <a class="brand" href="/#inicio" aria-label="Zion Clothing, início"><span class="brand-word">ZION<span>.</span></span><small>CLOTHING</small></a>
+    <a class="header-collection" href="/#catalogo">VER COLEÇÃO <span aria-hidden="true">↗</span></a>
+  </div>
+  <nav class="header-nav" aria-label="Navegação da loja">
+    <a href="/#catalogo">COLEÇÃO</a>
+    <a href="/#manifesto">NOSSO PROPÓSITO</a>
+    <a href="/#editorial">EDITORIAL</a>
+    <a href="/#newsletter">NOVIDADES</a>
+  </nav>
+</header>
+<div class="breadcrumbs"><a href="/#inicio">INÍCIO</a><span>/</span><a href="/#catalogo">COLEÇÃO</a><span>/</span><span id="breadcrumbProduct">PRODUTO</span></div>
 <main class="page">
  <div id="pageLoading" class="message" role="status">Carregando peça da coleção…</div>
  <div id="pageError" class="message" role="alert" hidden>Não foi possível localizar esse produto. <a href="/#catalogo">Voltar ao catálogo</a>.</div>
  <article id="productPage" class="product-layout" hidden>
   <div class="gallery">
-   <div class="hero-photo"><img id="productImage" alt="" decoding="async"><span class="photo-index" id="photoIndex">01 / 01</span></div>
-   <div class="thumbnails" id="productThumbnails" role="group" aria-label="Fotografias do produto"></div>
+    <div class="gallery-heading"><span>IMAGENS DA PEÇA</span><span>ROLE PARA EXPLORAR ↓</span></div>
+    <div class="gallery-scroll" id="productGalleryScroll" role="region" aria-label="Galeria de fotos da camiseta, role para explorar" tabindex="0">
+      <div class="photo-stack" id="productPhotoStack"></div>
+    </div>
+    <div class="gallery-foot"><span id="photoIndex">01 / 01</span><span>FOTOGRAFIAS REAIS · ZION CLOTHING</span></div>
   </div>
   <div class="details">
    <div class="overline">ZION / COLEÇÃO OFICIAL</div>
