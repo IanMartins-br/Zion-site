@@ -40,35 +40,47 @@ export function adminAccessMode(env){
   // Uma configuração parcial não reativa a senha antiga, evitando downgrade.
   return accessRequested(env);
 }
-export async function adminAccessIdentity(request,env){
-  if(!accessConfigured(env))return null;
-  if(String(env.ADMIN_ALLOWED_EMAIL||'').trim().toLowerCase()!==ADMIN_EMAIL)return null;
+// O diagnóstico contém apenas categorias, nunca o token, o cookie ou dados do usuário.
+function denyAccess(diagnostic,reason){
+  if(diagnostic&&typeof diagnostic==='object')diagnostic.code=reason;
+  return null;
+}
+export async function adminAccessIdentity(request,env,diagnostic){
+  if(!accessConfigured(env))return denyAccess(diagnostic,'ACCESS_SETTINGS_INCOMPLETE');
+  if(String(env.ADMIN_ALLOWED_EMAIL||'').trim().toLowerCase()!==ADMIN_EMAIL)return denyAccess(diagnostic,'ALLOWED_EMAIL_CONFIG');
   const token=tokenFrom(request);
-  if(!token||token.length>12000)return null;
+  if(!token)return denyAccess(diagnostic,'ACCESS_TOKEN_MISSING');
+  if(token.length>12000)return denyAccess(diagnostic,'ACCESS_TOKEN_TOO_LARGE');
   const parts=token.split('.');
-  if(parts.length!==3)return null;
+  if(parts.length!==3)return denyAccess(diagnostic,'ACCESS_TOKEN_FORMAT');
+  let phase='HEADER';
   try{
     const head=JSON.parse(new TextDecoder().decode(unpack(parts[0])));
-    if(head.alg!=='RS256'||typeof head.kid!=='string'||head.kid.length>250)return null;
+    if(head.alg!=='RS256'||typeof head.kid!=='string'||head.kid.length>250)return denyAccess(diagnostic,'ACCESS_TOKEN_HEADER');
     const team=String(env.ADMIN_ACCESS_TEAM_DOMAIN).trim().replace(/\/$/,'');
+    phase='JWKS_FETCH';
     const jwk=await fetchKey(team,head.kid);
-    if(!jwk)return null;
+    if(!jwk)return denyAccess(diagnostic,'ACCESS_CERT_KEY_NOT_FOUND');
+    phase='CRYPTO_VERIFY';
     const key=await crypto.subtle.importKey('jwk',jwk,{name:'RSASSA-PKCS1-v1_5',hash:'SHA-256'},false,['verify']);
     const signed=new TextEncoder().encode(parts[0]+'.'+parts[1]);
     const signature=unpack(parts[2]);
-    if(!await crypto.subtle.verify('RSASSA-PKCS1-v1_5',key,signature,signed))return null;
+    if(!await crypto.subtle.verify('RSASSA-PKCS1-v1_5',key,signature,signed))return denyAccess(diagnostic,'ACCESS_SIGNATURE_INVALID');
+    phase='CLAIMS';
     const payload=JSON.parse(new TextDecoder().decode(unpack(parts[1])));
     const now=Math.floor(Date.now()/1000);
     const aud=String(env.ADMIN_ACCESS_AUD).trim();
     const audience=Array.isArray(payload.aud)?payload.aud:[payload.aud];
-    if(payload.iss!==team||!audience.includes(aud)||payload.type!=='app')return null;
+    if(payload.iss!==team||!audience.includes(aud)||payload.type!=='app')return denyAccess(diagnostic,'ACCESS_AUDIENCE_OR_ISSUER');
     if(!Number.isFinite(payload.exp)||payload.exp<=now||
       (payload.nbf!==undefined&&payload.nbf>now+30)||
-      (payload.iat!==undefined&&payload.iat>now+30))return null;
-    if(String(payload.email||'').trim().toLowerCase()!==ADMIN_EMAIL)return null;
+      (payload.iat!==undefined&&payload.iat>now+30))return denyAccess(diagnostic,'ACCESS_TOKEN_EXPIRED');
+    if(String(payload.email||'').trim().toLowerCase()!==ADMIN_EMAIL)return denyAccess(diagnostic,'ACCESS_EMAIL_MISMATCH');
+    if(diagnostic&&typeof diagnostic==='object')diagnostic.code='ACCESS_OK';
     return {provider:'cloudflare-access',email:ADMIN_EMAIL};
   }catch(error){
-    console.warn('Zion admin Access token recusado:',String(error));
-    return null;
+    // Evite registrar token/cookie em mensagens de erro ou respostas.
+    console.warn('Zion admin Access: falha na fase',phase);
+    return denyAccess(diagnostic,phase==='JWKS_FETCH'?'ACCESS_CERT_FETCH_FAILED':phase==='CRYPTO_VERIFY'?'ACCESS_CRYPTO_FAILED':'ACCESS_TOKEN_DECODE_FAILED');
   }
 }
