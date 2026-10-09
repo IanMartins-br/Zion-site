@@ -13,7 +13,7 @@ function notify(message,error=false){
 async function api(path,options={}){
  const r=await fetch(path,{credentials:'same-origin',cache:'no-store',...options});
  let data;try{data=await r.json()}catch{data={error:'Falha na comunicação.'}}
- if(!r.ok)throw new Error(data.error||'Não foi possível concluir a operação.');
+ if(!r.ok){const err=new Error(data.error||'Não foi possível concluir a operação.');err.code=typeof data.code==='string'&&/^ACCESS_[A-Z_]+$/.test(data.code)?data.code:'';throw err;}
  return data;
 }
 const body=val=>({method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(val)});
@@ -180,7 +180,7 @@ async function initializeAdmin(){
  }catch(err){
   showDashboard(false);
   $('accessStatus').textContent='Não foi possível confirmar sua sessão.';
-  $('accessDetail').textContent='Entre novamente usando seu e-mail autorizado na Cloudflare Access e depois clique em verificar. Detalhe: '+(err?.message||'Falha de conexão.');
+  $('accessDetail').textContent='Somente seu iCloud autorizado pode acessar. Saia da Cloudflare e entre novamente se necessário. Detalhe: '+(err?.message||'Falha de conexão.')+(err?.code?' | Diagnóstico: '+err.code:'');
  }finally{retry.disabled=false}
 }
 $('retryAccess').addEventListener('click',initializeAdmin);
