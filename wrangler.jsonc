@@ -26,6 +26,7 @@
     }
   ],
   "vars": {
-    "INFINITEPAY_HANDLE": "zion-clothing"
+    "INFINITEPAY_HANDLE": "zion-clothing",
+    "ADMIN_ALLOWED_EMAIL": "ianlucas.fm@icloud.com"
   }
 }

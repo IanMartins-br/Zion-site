@@ -1,4 +1,5 @@
 import {checkoutRoutes,adminCheckoutOrders} from './checkout.js';
+import {adminAccessMode,adminAccessIdentity} from './admin-access.js';
 const json = (value,status=200,headers={}) => new Response(JSON.stringify(value),{status,headers:{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff',...headers}});
 const fail = (message,status=400) => json({error:message},status);
 const asText = (v,max=200) => String(v ?? '').trim().slice(0,max);
@@ -161,7 +162,9 @@ async function publicRoutes(request,env,path){
   return null;
 }
 async function adminRoutes(request,env,path){
+  const emailAccess=adminAccessMode(env);
   if(path==='/api/admin/login' && request.method==='POST'){
+    if(emailAccess)return fail('Use a autenticação por e-mail da Cloudflare Access.',403);
     if(!env.ADMIN_PASSWORD || !/^\\d{4}$/.test(env.ADMIN_PASSWORD))return fail('Configure ADMIN_PASSWORD com o PIN temporário de 4 dígitos no Secret do Worker.',503);
     const identity=await sha256('zion-login-attempts-v1|'+(request.headers.get('CF-Connecting-IP')||'local'));
     const windowStart=now()-900;
@@ -182,10 +185,11 @@ async function adminRoutes(request,env,path){
     await env.DB.prepare('INSERT INTO sessions (token_hash, expires_at) VALUES (?,?)').bind(hash,now()+43200).run();
     return json({ok:true},200,{'Set-Cookie':sessionCookie(token,43200)});
   }
-  const verified=await session(request,env);
-  if(!verified)return fail('Acesso restrito. Faça login.',401);
-  if(path==='/api/admin/me'&&request.method==='GET')return json({authenticated:true});
+  const verified=emailAccess?await adminAccessIdentity(request,env):await session(request,env);
+  if(!verified)return fail(emailAccess?'Acesso permitido somente ao e-mail autorizado na Cloudflare Access.':'Acesso restrito. Faça login.',401);
+  if(path==='/api/admin/me'&&request.method==='GET')return json({authenticated:true,provider:emailAccess?'cloudflare-access':'pin'});
   if(path==='/api/admin/logout'&&request.method==='POST'){
+    if(emailAccess)return json({ok:true,provider:'cloudflare-access',logout_url:'/cdn-cgi/access/logout'});
     await env.DB.prepare('DELETE FROM sessions WHERE token_hash = ?').bind(verified.token_hash).run();
     return json({ok:true},200,{'Set-Cookie':sessionCookie('',0)});
   }
