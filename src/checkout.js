@@ -1,5 +1,5 @@
 /* Checkout Zion + InfinitePay (API oficial). Nunca confie em preços fornecidos pelo navegador.
-   A cobrança só é habilitada após configuração explícita de conta E frete no Worker. */
+   A cobrança só é habilitada após configuração explícita da InfiniteTag E do frete. */
 const result=(data,status=200)=>new Response(JSON.stringify(data),{status,headers:{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'}});
 const error=(message,status=400)=>result({error:message},status);
 const now=()=>new Date().toISOString();
@@ -14,6 +14,7 @@ const providerRoot='https://api.checkout.infinitepay.io';
 async function checkoutTables(env){
   await env.DB.prepare(`CREATE TABLE IF NOT EXISTS zion_orders (
     order_nsu TEXT PRIMARY KEY,
+    handle TEXT NOT NULL DEFAULT '',
     status TEXT NOT NULL DEFAULT 'pending',
     items_json TEXT NOT NULL,
     customer_json TEXT NOT NULL,
@@ -66,7 +67,7 @@ async function verifyPayment(env,order,slug,transaction){
   if(order.status==='paid'||order.status==='paid_review')return order.status;
   if(!slug||!transaction||slug.length>180||transaction.length>180)return 'pending';
   const confirmed=await providerPost('/payment_check',{
-    handle:handleOf(env),order_nsu:order.order_nsu,slug,transaction_nsu:transaction
+    handle:order.handle,order_nsu:order.order_nsu,slug,transaction_nsu:transaction
   });
   if(confirmed.paid!==true||confirmed.success!==true)return 'pending';
   if(Number(confirmed.amount)!==Number(order.amount_cents))return 'amount_mismatch';
@@ -150,9 +151,9 @@ export async function checkoutRoutes(request,env,path){
     const redirect=new URL('/pedido/',request.url);
     redirect.searchParams.set('order_nsu',order_nsu);
     const hook=new URL('/api/checkout/webhook',request.url);
-    await env.DB.prepare(`INSERT INTO zion_orders(order_nsu,status,items_json,customer_json,address_json,
-      amount_cents,shipping_cents,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?)`)
-      .bind(order_nsu,'pending',JSON.stringify(lines),JSON.stringify(customer),JSON.stringify(address),
+    await env.DB.prepare(`INSERT INTO zion_orders(order_nsu,handle,status,items_json,customer_json,address_json,
+      amount_cents,shipping_cents,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?)`)
+      .bind(order_nsu,handleOf(env),'pending',JSON.stringify(lines),JSON.stringify(customer),JSON.stringify(address),
         amount,shippingOf(env),created,created).run();
     const providerItems=lines.map(v=>({
       quantity:v.quantity,price:v.price_cents,description:v.name+' / '+v.size
@@ -188,13 +189,14 @@ export async function checkoutRoutes(request,env,path){
       shipping_cents:row.shipping_cents}):error('Pedido não localizado.',404);
   }
   if((path==='/api/checkout/verify'||path==='/api/checkout/webhook')&&method==='POST'){
-    if(!isConfigured(env))return error('Checkout não configurado.',503);
+    // A confirmação de um pedido antigo continua válida mesmo se o lojista desativar o checkout.
     await checkoutTables(env);
     const data=await parseInput(request);
     const id=safeText(data.order_nsu,50);
     if(!uuid(id))return error('Pedido inválido.',400);
     const order=await env.DB.prepare('SELECT * FROM zion_orders WHERE order_nsu=?').bind(id).first();
     if(!order)return error('Pedido não encontrado.',404);
+    if(!/^[a-zA-Z0-9._-]{2,80}$/.test(order.handle||''))return error('Conta do pedido não configurada.',503);
     const slug=safeText(data.slug||data.invoice_slug,180);
     const transaction=safeText(data.transaction_nsu,180);
     let status;
@@ -205,4 +207,16 @@ export async function checkoutRoutes(request,env,path){
         review_required:status==='paid_review'});
   }
   return error('Rota não encontrada.',404);
+}
+
+/* Só chamar depois da autenticação de administrador do Worker. */
+export async function adminCheckoutOrders(env){
+  await checkoutTables(env);
+  const rows=(await env.DB.prepare('SELECT * FROM zion_orders ORDER BY created_at DESC LIMIT 100').all()).results||[];
+  return result({orders:rows.map(row=>({
+    order_nsu:row.order_nsu,status:row.status,amount_cents:row.amount_cents,
+    shipping_cents:row.shipping_cents,items:pickJson(row.items_json,[]),
+    customer:pickJson(row.customer_json,{}),address:pickJson(row.address_json,{}),
+    created_at:row.created_at,updated_at:row.updated_at
+  }))});
 }
