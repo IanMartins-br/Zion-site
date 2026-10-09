@@ -185,8 +185,13 @@ async function adminRoutes(request,env,path){
     await env.DB.prepare('INSERT INTO sessions (token_hash, expires_at) VALUES (?,?)').bind(hash,now()+43200).run();
     return json({ok:true},200,{'Set-Cookie':sessionCookie(token,43200)});
   }
-  const verified=emailAccess?await adminAccessIdentity(request,env):await session(request,env);
-  if(!verified)return fail(emailAccess?'Acesso permitido somente ao e-mail autorizado na Cloudflare Access.':'Acesso restrito. Faça login.',401);
+  const diagnostics=emailAccess&&path==='/api/admin/me'&&request.method==='GET'?{}:null;
+  const verified=emailAccess?await adminAccessIdentity(request,env,diagnostics):await session(request,env);
+  if(!verified){
+    const message=emailAccess?'Acesso permitido somente ao e-mail autorizado na Cloudflare Access.':'Acesso restrito. Faça login.';
+    if(diagnostics)return json({error:message,code:diagnostics.code||'ACCESS_UNKNOWN'},401,{'Cache-Control':'no-store'});
+    return fail(message,401);
+  }
   if(path==='/api/admin/me'&&request.method==='GET')return json({authenticated:true,provider:emailAccess?'cloudflare-access':'pin'});
   if(path==='/api/admin/logout'&&request.method==='POST'){
     if(emailAccess)return json({ok:true,provider:'cloudflare-access',logout_url:'/cdn-cgi/access/logout'});
