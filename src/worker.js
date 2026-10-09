@@ -277,7 +277,12 @@ export default {
       // Se buscarmos /admin.html aqui, /admin e /admin.html redirecionam entre si.
       if ((path === '/admin' || path === '/admin/') && (request.method === 'GET' || request.method === 'HEAD')) {
         const target=new URL('/admin',request.url);
-        return env.ASSETS.fetch(new Request(target.toString(),request));
+        const asset=await env.ASSETS.fetch(new Request(target.toString(),request));
+        // Não conservar em cache a página que verifica o login administrativo.
+        const headers=new Headers(asset.headers);
+        headers.set('Cache-Control','private, no-store, max-age=0');
+        headers.set('X-Robots-Tag','noindex, nofollow');
+        return new Response(request.method==='HEAD'?null:asset.body,{status:asset.status,statusText:asset.statusText,headers});
       }
       if(path.startsWith('/media/')){
         if(request.method!=='GET'&&request.method!=='HEAD')return fail('Método não permitido.',405);

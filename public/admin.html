@@ -6,15 +6,18 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/admin.css?v=2">
+<link rel="stylesheet" href="/admin.css?v=3">
 </head>
 <body>
 <header class="admin-header"><a href="/" class="wordmark" aria-label="Zion — Página inicial">ZION<span>.</span></a><span>PAINEL ADMINISTRATIVO</span><button id="logoutButton" class="outline small" type="button" hidden>Sair</button></header>
 <main>
 <section id="loginView" class="login-wrap">
-<p class="kicker">ACESSO RESTRITO</p><h1>Gestão da<br><em>Zion Clothing.</em></h1>
-<p class="muted">Cadastre produtos, controle tamanhos e escolha as fotos das campanhas.</p>
-<form id="loginForm" class="card login-form"><label for="password">SENHA DO ADMINISTRADOR</label><input id="password" type="password" inputmode="numeric" pattern="[0-9]{4}" autocomplete="current-password" minlength="4" maxlength="4" required placeholder="PIN de 4 dígitos"><button class="solid" type="submit">Entrar no painel ↗</button></form>
+<p class="kicker">ACESSO PROTEGIDO</p><h1>Gestão da<br><em>Zion Clothing.</em></h1>
+<p class="muted" id="accessStatus" role="status" aria-live="polite">Verificando sua sessão de acesso por e-mail…</p>
+<div class="card access-card">
+<p class="muted" id="accessDetail">O painel está disponível somente para o e-mail autorizado na Cloudflare Access. Não é necessária uma senha de administrador da Zion.</p>
+<div class="access-actions"><button id="retryAccess" class="solid" type="button">Verificar acesso novamente ↗</button><a class="outline access-alt" href="/cdn-cgi/access/logout">Sair da Cloudflare e entrar novamente</a></div>
+</div>
 </section>
 <section id="dashboard" hidden>
 <div class="dashboard-heading"><div><p class="kicker">ZION / GESTÃO</p><h1>Seu catálogo,<br><em>seus pedidos.</em></h1></div><p class="muted">As imagens ficam no R2. Os produtos e estoques ficam no D1.</p></div>
@@ -54,5 +57,5 @@
 </section>
 <p class="status" id="feedback" role="status" aria-live="polite"></p>
 </main>
-<script defer src="/admin.js?v=zion-catalog-7"></script>
+<script defer src="/admin.js?v=zion-access-8"></script>
 </body></html>

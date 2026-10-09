@@ -1,7 +1,7 @@
 
 const $=id=>document.getElementById(id);
 const $$=(q,root=document)=>Array.from(root.querySelectorAll(q));
-const state={products:[],media:[],editing:null,selected:[],accessEmail:false};
+const state={products:[],media:[],editing:null,selected:[]};
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const currency=v=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format((v||0)/100);
 const stamp=()=>Date.now();
@@ -17,7 +17,7 @@ async function api(path,options={}){
  return data;
 }
 const body=val=>({method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(val)});
-function showDashboard(visible){$('loginView').hidden=visible;$('dashboard').hidden=!visible;$('logoutButton').hidden=!visible;$('logoutButton').textContent=state.accessEmail?'Sair do acesso por e-mail':'Sair'}
+function showDashboard(visible){$('loginView').hidden=visible;$('dashboard').hidden=!visible;$('logoutButton').hidden=!visible;$('logoutButton').textContent='Sair do acesso por e-mail'}
 function changeTab(tab){
  $$('[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
  $('productsSection').hidden=tab!=='products';$('mediaSection').hidden=tab!=='media';$('ordersSection').hidden=tab!=='orders';
@@ -107,15 +107,9 @@ async function uploadPhotos(files,kind,slot,title){
  }
  return uploaded;
 }
-$('loginForm').addEventListener('submit',async e=>{
- e.preventDefault();const button=e.target.querySelector('button');button.disabled=true;
- try{
-  await api('/api/admin/login',body({password:$('password').value}));
-  $('password').value='';showDashboard(true);await refresh();notify('Bem-vindo ao painel da Zion.');
- }catch(err){notify(err.message,true)}finally{button.disabled=false}
-});
-$('logoutButton').addEventListener('click',async()=>{if(state.accessEmail){window.location.assign('/cdn-cgi/access/logout');return}try{await api('/api/admin/logout',{method:'POST'})}catch{}showDashboard(false);resetForm();notify('Sessão encerrada.')});
-$('[data-tab]').forEach(b=>b.addEventListener('click',()=>changeTab(b.dataset.tab)));
+// A administração usa exclusivamente Cloudflare Access: não mostrar ou enviar PIN local.
+$('logoutButton').addEventListener('click',()=>{window.location.assign('/cdn-cgi/access/logout')});
+$$('[data-tab]').forEach(b=>b.addEventListener('click',()=>changeTab(b.dataset.tab)));
 $('refreshOrders').addEventListener('click',refreshOrders);
 $('resetProduct').addEventListener('click',resetForm);
 $('productImagePicker').addEventListener('click',e=>{
@@ -172,4 +166,22 @@ $('mediaList').addEventListener('click',async e=>{
  await refresh();notify('Banco de imagens atualizado.');
  }catch(err){notify(err.message,true)}
 });
-api('/api/admin/me').then(async info=>{state.accessEmail=info.provider==='cloudflare-access';showDashboard(true);await refresh()}).catch(err=>{showDashboard(false);if(err.message.includes('Cloudflare')){document.querySelector('#loginView .muted').textContent='Este painel é exclusivo do e-mail autorizado. A autenticação por e-mail deve ser concluída na Cloudflare Access.';$('loginForm').hidden=true;notify(err.message,true)}});
+async function initializeAdmin(){
+ const retry=$('retryAccess');retry.disabled=true;
+ $('accessStatus').textContent='Verificando sua sessão de acesso por e-mail…';
+ $('accessDetail').textContent='Somente o e-mail autorizado pode acessar o painel. Não existe PIN local.';
+ try{
+  const info=await api('/api/admin/me');
+  if(info.authenticated!==true||info.provider!=='cloudflare-access'){
+   throw new Error('Esta sessão não foi autenticada pela Cloudflare Access.');
+  }
+  showDashboard(true);
+  try{await refresh()}catch(err){notify('Acesso confirmado, mas não foi possível carregar produtos ou imagens: '+err.message,true)}
+ }catch(err){
+  showDashboard(false);
+  $('accessStatus').textContent='Não foi possível confirmar sua sessão.';
+  $('accessDetail').textContent='Entre novamente usando seu e-mail autorizado na Cloudflare Access e depois clique em verificar. Detalhe: '+(err?.message||'Falha de conexão.');
+ }finally{retry.disabled=false}
+}
+$('retryAccess').addEventListener('click',initializeAdmin);
+initializeAdmin();

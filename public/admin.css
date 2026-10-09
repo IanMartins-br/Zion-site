@@ -12,3 +12,6 @@
 .order-body{padding:18px 22px;font-size:12px;line-height:1.8}
 .order-body p{margin:0 0 8px}.order-body ul{margin:5px 0 0;padding-left:19px}
 @media(max-width:700px){.order-entry summary{grid-template-columns:1fr 1fr;gap:8px}.order-entry summary small{text-align:left}.orders-list{gap:8px}}
+
+/* Login via Cloudflare Access: estado claro de verificação, sem PIN próprio. */
+.access-card{margin-top:28px}.access-card>.muted{margin:0;line-height:1.75}.access-actions{display:grid;gap:11px;margin-top:20px}.access-alt{display:flex;justify-content:center;align-items:center;min-height:46px;text-align:center}.access-actions .solid{width:100%}
