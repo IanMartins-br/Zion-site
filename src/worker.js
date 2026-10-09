@@ -63,7 +63,19 @@ async function ensureFirstProduct(env) {
   const stamp=new Date().toISOString();
   await env.DB.batch([
     env.DB.prepare('INSERT OR IGNORE INTO products(id,name,category,description,price_cents,tag,sizes_json,stock_json,images_json,active,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)')
-      .bind(FIRST_PRODUCT_ID,'Camiseta Oversized Heavy - Go into all the world – 240g','Unissex',FIRST_PRODUCT_DESCRIPTION,11990,'HEAVY 240G','[]','{}','[]',1,stamp,stamp),
+      .bind(FIRST_PRODUCT_ID,'Camiseta Oversized Heavy - Go into all the world – 240g','Unissex',FIRST_PRODUCT_DESCRIPTION,11990,'HEAVY 240G','["P","M","G","GG"]','{"P":0,"M":1,"G":0,"GG":0}','[]',1,stamp,stamp),
+    env.DB.prepare('INSERT OR IGNORE INTO catalog_bootstrap(id,applied_at) VALUES (?,?)').bind(marker,stamp)
+  ]);
+}
+// Ajuste único de estoque do primeiro produto, sem sobrescrever alterações no painel.
+async function ensureFirstProductSizes(env) {
+  const marker='first-go-into-world-sizes-v1';
+  const found=await env.DB.prepare('SELECT id FROM catalog_bootstrap WHERE id = ?').bind(marker).first();
+  if(found)return;
+  const stamp=new Date().toISOString();
+  await env.DB.batch([
+    env.DB.prepare("UPDATE products SET sizes_json=?,stock_json=?,updated_at=? WHERE id=? AND sizes_json='[]' AND stock_json='{}'")
+      .bind('["P","M","G","GG"]','{"P":0,"M":1,"G":0,"GG":0}',stamp,FIRST_PRODUCT_ID),
     env.DB.prepare('INSERT OR IGNORE INTO catalog_bootstrap(id,applied_at) VALUES (?,?)').bind(marker,stamp)
   ]);
 }
@@ -84,6 +96,7 @@ const publicMedia=row=>({id:row.id,kind:row.kind,slot:row.slot,title:row.title,k
 async function publicRoutes(request,env,path){
   if(path==='/api/products' && request.method==='GET'){
     await ensureFirstProduct(env);
+    await ensureFirstProductSizes(env);
     const rows=(await env.DB.prepare('SELECT * FROM products WHERE active = 1 ORDER BY created_at DESC').all()).results;
     return json({products:rows.map(publicProduct)});
   }
