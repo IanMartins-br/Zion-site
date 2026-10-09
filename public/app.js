@@ -11,7 +11,7 @@ const $ = (selector, root=document) => root.querySelector(selector);
 const $$ = (selector, root=document) => [...root.querySelectorAll(selector)];
 const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 const money = value => new Intl.NumberFormat('pt-BR',{style:'currency',currency:STORE.currency}).format(value);
-const imageUrl = (id, width=700) => !id ? '/placeholder.svg' : /^\/assets\/zion-(0770|0779|0790|0791|0799|cover-wide)\.webp$/.test(id) ? id : id.startsWith('/media/') ? id : id.startsWith('https://') ? id : `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${width}&q=82`;
+const imageUrl = (id, width=700) => !id ? '/placeholder.svg' : /^\/assets\/zion-(0770|0779|0790|0791|0799|cover-wide|go-into-all-world-capa|go-into-world-(786|787|788|789|790))\.webp$/.test(id) ? id : id.startsWith('/media/') ? id : id.startsWith('https://') ? id : `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${width}&q=82`;
 const safeRead = (key,fallback) => {try{return JSON.parse(localStorage.getItem(key))??fallback}catch{return fallback}};
 const safeSave = (key,value) => {try{localStorage.setItem(key,JSON.stringify(value))}catch{}};
 let cart = safeRead('zion-cart',[]);
@@ -59,13 +59,13 @@ function productCard(product){
   const href=productPageUrl(product.id);
   return `<article class="product-card${second?' has-preview':''}">
     <div class="product-image-wrap">
-      <a class="product-photo-trigger" href="${href}" target="_blank" rel="noopener noreferrer" aria-label="Abrir ${escapeHtml(product.name)} em nova aba"><img src="${imageUrl(product.image)}" alt="${escapeHtml(product.name)}" loading="lazy" decoding="async"></a>
+      <a class="product-photo-trigger" href="${href}" aria-label="Abrir ${escapeHtml(product.name)}"><img src="${imageUrl(product.image)}" alt="${escapeHtml(product.name)}" loading="lazy" decoding="async"></a>
       ${product.tag?`<span class="product-flag">${escapeHtml(product.tag)}</span>`:''}
       <button class="wishlist ${liked?'selected':''}" data-favorite="${product.id}" type="button" aria-label="${liked?'Remover dos':'Adicionar aos'} favoritos: ${escapeHtml(product.name)}" aria-pressed="${liked}"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 20.7 4 12.6C-1 7.6 6 1.2 12 7.6c6-6.4 13 0 8 5l-8 8.1Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg></button>
-      <a class="quick-add" href="${href}" target="_blank" rel="noopener noreferrer" aria-label="Comprar ${escapeHtml(product.name)} em nova aba">COMPRAR <span aria-hidden="true">↗</span></a>
+      <a class="quick-add" href="${href}" aria-label="Comprar ${escapeHtml(product.name)}">COMPRAR <span aria-hidden="true">↗</span></a>
     </div>
     ${preview}
-    <div class="product-meta"><div><p class="product-title"><a href="${href}" target="_blank" rel="noopener noreferrer">${escapeHtml(product.name)}</a></p><p class="product-category">${escapeHtml(product.category)}</p></div><span class="product-price">${money(product.price)}</span></div>
+    <div class="product-meta"><div><p class="product-title"><a href="${href}">${escapeHtml(product.name)}</a></p><p class="product-category">${escapeHtml(product.category)}</p></div><span class="product-price">${money(product.price)}</span></div>
   </article>`;
 }
 function sortedProducts(list){
@@ -134,7 +134,7 @@ function renderSearch(){
   const filtered=q?STORE.products.filter(p=>normalize(`${escapeHtml(p.name)} ${escapeHtml(p.category)} ${p.description}`).includes(q)):STORE.products.slice(0,5);
   $('#searchResults').innerHTML=filtered.length?filtered.map(miniProduct).join(''):'<p class="empty-message">Nenhuma peça encontrada.</p>';
 }
-function miniProduct(p){return `<a class="mini-product mini-product-button" href="${productPageUrl(p.id)}" target="_blank" rel="noopener noreferrer"><img src="${imageUrl(p.image,300)}" alt=""><span><p>${escapeHtml(p.name)}</p><small>${escapeHtml(p.category)} · ${money(p.price)}</small></span></a>`}
+function miniProduct(p){return `<a class="mini-product mini-product-button" href="${productPageUrl(p.id)}"><img src="${imageUrl(p.image,300)}" alt=""><span><p>${escapeHtml(p.name)}</p><small>${escapeHtml(p.category)} · ${money(p.price)}</small></span></a>`}
 function renderFavorites(){
   const items=STORE.products.filter(p=>favorites.includes(String(p.id)));
   $('#favoritesResults').innerHTML=items.length?items.map(miniProduct).join(''):'<p class="empty-message">Salve as peças que você mais gosta e encontre tudo por aqui.</p>';

@@ -82,8 +82,19 @@ async function ensureFirstProductSizes(env) {
 const publicProduct=row=>{
   const keys=pickJSON(row.images_json,[]);
   const images=keys.map(key=>'/media/'+key);
-  // Foto oficial local até cadastrar imagens do item no R2.
-  if(!images.length && row.id===FIRST_PRODUCT_ID)images.push(FIRST_PRODUCT_IMAGE);
+  // Go Into All The World: mockup de capa escolhido + cinco fotos reais
+  // identificadas na pasta ZION-FOTOS do Drive (IMG_0786 a IMG_0790).
+  // Versões WebP otimizadas, armazenadas localmente para carregamento estável.
+  if(row.id===FIRST_PRODUCT_ID){
+    images.unshift(
+      '/assets/zion-go-into-all-world-capa.webp',
+      '/assets/zion-go-into-world-786.webp',
+      '/assets/zion-go-into-world-787.webp',
+      '/assets/zion-go-into-world-788.webp',
+      '/assets/zion-go-into-world-789.webp',
+      '/assets/zion-go-into-world-790.webp'
+    );
+  }
   return {
     id:row.id,name:row.name,category:row.category,description:row.description,
     price_cents:row.price_cents,tag:row.tag,sizes:pickJSON(row.sizes_json,[]),

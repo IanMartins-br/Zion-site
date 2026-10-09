@@ -5,7 +5,7 @@
   const money = amount => new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(amount);
   const safeImage = url => typeof url==='string' && (
     /^\/media\/products\/[a-f0-9-]{36}\.(jpg|png|webp|avif)$/.test(url) ||
-    /^\/assets\/zion-(0770|0779|0790|0791|0799|cover-wide)\.webp$/.test(url)
+    /^\/assets\/zion-(0770|0779|0790|0791|0799|cover-wide|go-into-all-world-capa|go-into-world-(786|787|788|789|790))\.webp$/.test(url)
   );
   const url = new URL(window.location.href);
   const id = url.searchParams.get('id');
