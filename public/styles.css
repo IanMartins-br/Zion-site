@@ -141,8 +141,8 @@ body.zion-intro-lock{overflow:hidden}
 .zion-intro__quote{font-family:'Courier Prime','Courier New',monospace;font-weight:400;font-size:clamp(13px,1.65vw,24px);line-height:1.55;letter-spacing:-.035em}
 .zion-intro__line{display:block;opacity:0;clip-path:inset(0 100% 0 0)}
 .zion-intro.is-typing .zion-intro__line--first{opacity:1;animation:zion-type-first .92s steps(27,end) both}
-.zion-intro__source{font:600 10px/1.5 var(--sans);letter-spacing:.24em;margin-top:35px;color:#bfcdb7;opacity:0;transition:opacity .4s}
-.zion-intro.is-typing .zion-intro__source{animation:zion-source .28s .98s both}
+.zion-intro__source{font:600 10px/1.5 var(--sans);letter-spacing:.24em;margin-top:35px;color:#bfcdb7;opacity:1;transition:none}
+.zion-intro.is-typing .zion-intro__source{opacity:1;animation:zion-source .2s both}
 @keyframes zion-type-first{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
 @keyframes zion-source{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 .zion-intro.is-gathering .zion-intro__verse,.zion-intro.is-wordmark .zion-intro__verse{visibility:hidden;transition:none;transform:none;opacity:1;filter:none}
@@ -190,28 +190,20 @@ body.zion-intro-lock{overflow:hidden}
 #addToCartButton:disabled{opacity:.56;cursor:not-allowed;background:#59675c;border-color:#59675c;color:#fff}
 #sizeFeedback:not(:empty){font-size:11px;line-height:1.65;color:#765b47}
 
-/* ZION / CATÁLOGO COM MOCKUP SOBRE FUNDO BRANCO E PREVIEW ESTILO ROMÃ.
-   O preview só é renderizado para produtos que possuam segunda foto. */
-.product-card{position:relative;isolation:isolate}
-.product-card:hover{z-index:12}
-.product-card .product-image-wrap{background:#fff}
-.product-card .product-photo-trigger img{object-fit:contain;object-position:center;background:#fff}
-.product-card .quick-add{display:flex;justify-content:center;align-items:center;gap:12px;text-decoration:none;z-index:2}
-.product-hover-preview{position:absolute;z-index:15;left:calc(100% - 11px);top:7%;width:clamp(190px,18vw,295px);aspect-ratio:3/4;background:#fff;box-shadow:0 18px 55px rgba(17,29,22,.24);padding:7px;border:1px solid rgba(224,227,220,.92);border-radius:2px;pointer-events:none;opacity:0;visibility:hidden;transform:translate3d(-8px,18px,0) rotate(1.6deg) scale(.96);transition:opacity .28s ease,visibility .28s ease,transform .45s cubic-bezier(.21,.75,.3,1)}
-.product-hover-preview img{display:block;width:100%;height:100%;object-fit:cover}
+/* Cartões editoriais: foto de capa sem borda e troca de imagem DENTRO do card. */
+.product-card{position:relative;isolation:auto}
+.product-card .product-image-wrap{background:transparent;overflow:hidden}
+.product-card .product-photo-trigger{position:absolute;inset:0;display:block}
+.product-card .product-photo-trigger img{width:100%;height:100%;object-fit:cover;object-position:center;background:transparent;transition:transform .55s ease,opacity .4s ease}
+.product-card .product-photo-trigger .product-hover-image{position:absolute;inset:0;opacity:0;transform:scale(1.025)}
+.product-card .quick-add{display:flex;justify-content:center;align-items:center;gap:12px;text-decoration:none;z-index:3}
+.product-card .wishlist{z-index:4}
+.product-card .product-flag{z-index:3}
 @media(hover:hover) and (pointer:fine){
- .product-card.has-preview:hover .product-hover-preview,.product-card.has-preview:focus-within .product-hover-preview{opacity:1;visibility:visible;transform:translate3d(0,0,0) rotate(0) scale(1)}
- .products-grid>.product-card:nth-child(4n) .product-hover-preview{left:auto;right:calc(100% - 11px);transform:translate3d(8px,18px,0) rotate(-1.6deg) scale(.96)}
- .products-grid>.product-card:nth-child(4n):hover .product-hover-preview{transform:translate3d(0,0,0) rotate(0) scale(1)}
+ .product-card.has-preview .product-photo-trigger:hover .product-main-image,
+ .product-card.has-preview .product-image-wrap:hover .product-main-image{opacity:0;transform:scale(1)}
+ .product-card.has-preview .product-image-wrap:hover .product-hover-image,
+ .product-card.has-preview .product-photo-trigger:focus-visible .product-hover-image{opacity:1;transform:scale(1)}
 }
-@media(min-width:701px) and (max-width:1050px){
- .products-grid>.product-card:nth-child(4n) .product-hover-preview{left:calc(100% - 11px);right:auto}
- .products-grid>.product-card:nth-child(3n) .product-hover-preview{left:auto;right:calc(100% - 11px)}
-}
-@media(hover:none),(pointer:coarse),(max-width:700px){
- .product-hover-preview{display:none!important}
- .product-card .quick-add{display:flex}
-}
-@media(prefers-reduced-motion:reduce){
- .product-hover-preview{transition:none;transform:none}
-}
+@media(hover:none),(pointer:coarse){.product-card .product-hover-image{display:none}}
+@media(prefers-reduced-motion:reduce){.product-card .product-photo-trigger img{transition:none!important}}
